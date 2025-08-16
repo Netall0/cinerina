@@ -1,6 +1,8 @@
 // lib/app.dart
 import 'package:cinerina/core/config/app_config.dart';
+import 'package:cinerina/core/ui/app_icons.dart';
 import 'package:flutter/material.dart';
+import 'package:uikit/test_widget.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -26,29 +28,11 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Home'),
+        title: const Text('dede'),
       ),
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              'API Key: ${AppConfig.apiKey}',
-              style: Theme.of(context).textTheme.bodyLarge,
-            ),
-            const SizedBox(height: 16),
-            Text(
-              'Environment: ${AppConfig.environmentName}',
-              style: Theme.of(context).textTheme.bodyMedium,
-            ),
-            const SizedBox(height: 16),
-            Text(
-              'Base URL: ${AppConfig.apiBaseUrl}',
-              style: Theme.of(context).textTheme.bodyMedium,
-            ),
-          ],
-        ),
-      ),
+        child: Sas(),
+      )
     );
   }
 }
