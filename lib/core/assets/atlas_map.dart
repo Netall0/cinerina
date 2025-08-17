@@ -78,7 +78,7 @@ class SpriteIconSimple extends StatelessWidget {
   final double size;
   final Color? color;
 
-  const SpriteIconSimple(this.name, {Key? key, this.size = 24, this.color}) : super(key: key);
+  const SpriteIconSimple(this.name, {super.key, this.size = 24, this.color});
 
   @override
   Widget build(BuildContext context) {

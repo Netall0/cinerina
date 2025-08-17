@@ -1,6 +1,5 @@
 // lib/app.dart
 import 'package:cinerina/core/config/app_config.dart';
-import 'package:cinerina/core/ui/app_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:uikit/test_widget.dart';
 

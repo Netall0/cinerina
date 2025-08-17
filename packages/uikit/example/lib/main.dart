@@ -1,8 +1,11 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
+import 'package:uikit/layout/windows_scope.dart';
 import 'package:uikit/themes/app_theme.dart';
 
 void main(List<String> args) {
-  runApp(UiKitExample());
+  runApp(LayoutProvider(child: UiKitExample()));
 }
 
 class UiKitExample extends StatelessWidget {
@@ -11,15 +14,8 @@ class UiKitExample extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      theme: ThemeData(
-        useMaterial3: true,
-        extensions:  [AppTheme.light]
-      ),
-      darkTheme: ThemeData(
-        useMaterial3: true,
-        extensions:  [AppTheme.dark]
-
-      ),
+      theme: ThemeData(useMaterial3: true, extensions: [AppTheme.light]),
+      darkTheme: ThemeData(useMaterial3: true, extensions: [AppTheme.dark]),
       themeMode: ThemeMode.dark,
       home: UiKitExampleScreen(),
     );
@@ -35,55 +31,104 @@ class UiKitExampleScreen extends StatefulWidget {
 
 class _UiKitExampleScreenState extends State<UiKitExampleScreen> {
   @override
-  Widget build(BuildContext context) { 
+  Widget build(BuildContext context) {
     final theme = Theme.of(context).extension<AppTheme>()!;
+    final layout = LayoutScope.of(context);
     return Scaffold(
       body: CustomScrollView(
         slivers: [
-          _SliverAnimatedSwitcher(child: child, duration: duration),
-
+          SliverMainAxisGroup(
+            slivers: [
+              SliverAppBar(title: const Text('Colors'), pinned: true),
+              SliverPadding(
+                padding: layout.padding,
+                sliver: SliverGrid.builder(
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: layout.columns,
+                    crossAxisSpacing: layout.spacing,
+                    mainAxisSpacing: layout.spacing,
+                    childAspectRatio: 1,
+                  ),
+                  itemCount: theme.colorEntries.length,
+                  itemBuilder: (context, index) {
+                    final color = theme.colorEntries[index];
+                    return _ColorBox(color: color.value, text: color.key);
+                  },
+                ),
+              ),
+            ],
+          ),
+          SliverMainAxisGroup(
+            slivers: [
+              SliverAppBar(title: const Text('Typography'), pinned: true),
+              SliverPadding(
+                padding: layout.padding,
+                sliver: SliverGrid.builder(
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: layout.columns,
+                    crossAxisSpacing: layout.spacing,
+                    mainAxisSpacing: layout.spacing,
+                    childAspectRatio: 1,
+                  ),
+                  itemCount: theme.textStyleEntries.length,
+                  itemBuilder: (context, index) {
+                    final entry = theme.textStyleEntries[index];
+                    return _TypographyBox(text: entry.key, style: entry.value);
+                  },
+                ),
+              ),
+            ],
+          ),
         ],
-        
-      )
+      ),
     );
   }
 }
 
 class _ColorBox extends StatelessWidget {
-  const _ColorBox({super.key, this.color});
+  const _ColorBox({this.color, required this.text});
 
   final color;
+
+  final String text;
 
   @override
   Widget build(BuildContext context) {
     return DecoratedBox(
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(12),
+        shape: BoxShape.rectangle,
+        color: color,
+        border: Border.all(color: Colors.black),
       ),
-      child: ColoredBox(
-        color: color
-        
+      child: Align(
+        alignment: Alignment.center,
+        child: Text(text, style: TextStyle(color: getContrastColor(color))),
       ),
     );
   }
 }
-class _SliverAnimatedSwitcher extends StatelessWidget {
-  final Widget child;
-  final Duration duration;
 
-  const _SliverAnimatedSwitcher({
-    Key? key,
-    required this.child,
-    required this.duration,
-  }) : super(key: key);
+class _TypographyBox extends StatelessWidget {
+  const _TypographyBox({required this.text, required this.style});
+
+  final String text;
+  final TextStyle style;
 
   @override
   Widget build(BuildContext context) {
-    return SliverToBoxAdapter(
-      child: AnimatedSwitcher(
-        duration: duration,
-        child: child,
+    return Text(
+      text,
+      style: TextStyle(
+        color: Colors.black,
+        fontFamily: style.fontFamily,
+        fontSize: style.fontSize,
       ),
+      textAlign: TextAlign.center,
     );
   }
+}
+
+Color getContrastColor(Color backgroundColor) {
+  final luminance = backgroundColor.computeLuminance();
+  return luminance > 0.5 ? Colors.black87 : Colors.white;
 }

@@ -345,5 +345,38 @@ class AppTheme extends ThemeExtension<AppTheme> with _$AppThemeTailorMixin {
     
     // Shadows
     shadowElevation1: ThemeConstants.shadowElevation1, headlineFont: '', bodyFont: '', shadowElevation2: [],
+
   );
+}
+
+extension AppThemeExtension on AppTheme {
+  List<MapEntry<String, Color>> get colorEntries => [
+    MapEntry('primary', primary),
+    MapEntry('secondary', secondary),
+    MapEntry('background', background),
+    MapEntry('surface', surface),
+    MapEntry('error', error),
+    MapEntry('onPrimary', onPrimary),
+    MapEntry('onSecondary', onSecondary),
+    MapEntry('onBackground', onBackground),
+    MapEntry('onSurface', onSurface),
+    MapEntry('onError', onError),
+    MapEntry('textPrimary', textPrimary),
+    MapEntry('textSecondary', textSecondary),
+    MapEntry('textDisabled', textDisabled),
+  ];
+  
+  List<MapEntry<String, TextStyle>> get textStyleEntries => [
+    MapEntry('h1', h1),
+    MapEntry('h2', h2),
+    MapEntry('h3', h3),
+    MapEntry('h4', h4),
+    MapEntry('h5', h5),
+    MapEntry('h6', h6),
+    MapEntry('bodyLarge', bodyLarge),
+    MapEntry('bodyMedium', bodyMedium),
+    MapEntry('bodySmall', bodySmall),
+    MapEntry('caption', caption),
+    MapEntry('overline', overline),
+  ];
 }
