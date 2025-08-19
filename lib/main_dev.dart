@@ -1,11 +1,14 @@
 // lib/main_dev.dart
 import 'package:cinerina/core/config/app_config.dart';
-import 'package:cinerina/feature/app.dart';
+import 'package:cinerina/feature/app/widget/app.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  final pref = await SharedPreferences.getInstance();
   
   // Настройки для разработки
   await SystemChrome.setPreferredOrientations([
@@ -17,5 +20,5 @@ void main() async {
   debugPrint('📡 API Key: ${AppConfig.apiKey}');
   debugPrint('🏗️ Environment: ${AppConfig.environment}');
   
-  runApp(const MyApp());
+  runApp( AppRoot(pref: pref,));
 }

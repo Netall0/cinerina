@@ -1,0 +1,9 @@
+# build.yaml
+targets:
+  $default:
+    builders:
+      theme_tailor|theme_tailor:
+        options:
+          input_file: "theme_config.yaml"
+          output_file: "lib/themes/app_theme.dart"
+          class_name: "AppTheme"
