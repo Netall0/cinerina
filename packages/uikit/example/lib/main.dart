@@ -8,16 +8,23 @@ void main(List<String> args) {
   runApp(LayoutProvider(child: UiKitExample()));
 }
 
+final themeModeSwitcher = ValueNotifier(ThemeMode.dark);
+
 class UiKitExample extends StatelessWidget {
   const UiKitExample({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      theme: ThemeData(useMaterial3: true, extensions: [AppTheme.light]),
-      darkTheme: ThemeData(useMaterial3: true, extensions: [AppTheme.dark]),
-      themeMode: ThemeMode.dark,
-      home: UiKitExampleScreen(),
+    return ValueListenableBuilder(
+      valueListenable: themeModeSwitcher,
+      builder: (context, value, child) {
+        return MaterialApp(
+          theme: ThemeData(useMaterial3: true, extensions: [AppTheme.light]),
+          darkTheme: ThemeData(useMaterial3: true, extensions: [AppTheme.dark]),
+          themeMode: value,
+          home: UiKitExampleScreen(),
+        );
+      },
     );
   }
 }
@@ -35,11 +42,24 @@ class _UiKitExampleScreenState extends State<UiKitExampleScreen> {
     final theme = Theme.of(context).extension<AppTheme>()!;
     final layout = LayoutScope.of(context);
     return Scaffold(
+      backgroundColor: theme.background,
       body: CustomScrollView(
         slivers: [
           SliverMainAxisGroup(
             slivers: [
-              SliverAppBar(title: const Text('Colors'), pinned: true),
+              SliverAppBar(
+                title: const Text('Colors'),
+                pinned: true,
+                leading: IconButton(
+                  iconSize: 24,
+                  onPressed: () => themeModeSwitcher.value == ThemeMode.dark
+                      ? themeModeSwitcher.value = ThemeMode.light
+                      : themeModeSwitcher.value = ThemeMode.dark,
+                  icon: themeModeSwitcher.value == ThemeMode.dark
+                      ? const Icon(Icons.dark_mode)
+                      : const Icon(Icons.light_mode),
+                ),
+              ),
               SliverPadding(
                 padding: layout.padding,
                 sliver: SliverGrid.builder(
@@ -60,7 +80,19 @@ class _UiKitExampleScreenState extends State<UiKitExampleScreen> {
           ),
           SliverMainAxisGroup(
             slivers: [
-              SliverAppBar(title: const Text('Typography'), pinned: true),
+              SliverAppBar(
+                title: const Text('Colors'),
+                pinned: true,
+                leading: IconButton(
+                  iconSize: 24,
+                  onPressed: () => themeModeSwitcher.value == ThemeMode.dark
+                      ? themeModeSwitcher.value = ThemeMode.light
+                      : themeModeSwitcher.value = ThemeMode.dark,
+                  icon: themeModeSwitcher.value == ThemeMode.dark
+                      ? const Icon(Icons.dark_mode)
+                      : const Icon(Icons.light_mode),
+                ),
+              ),
               SliverPadding(
                 padding: layout.padding,
                 sliver: SliverGrid.builder(

@@ -39,7 +39,7 @@ class LayoutProvider extends StatelessWidget {
         final EdgeInsets sizes;
         final double spacing;
         if (width > 1024) {
-          columns = 2;
+          columns = 4;
           spacing = AppSizes.double20;
           sizes = EdgeInsets.all(AppSizes.double20);
         } else if (width > 768) {
@@ -47,7 +47,7 @@ class LayoutProvider extends StatelessWidget {
           columns = 3;
           sizes = EdgeInsets.all(AppSizes.double16);
         } else {
-          columns = 4;
+          columns = 2;
           spacing = AppSizes.double12;
           sizes = EdgeInsets.all(AppSizes.double12);
         }
