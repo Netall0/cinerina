@@ -1,37 +1,56 @@
-import 'package:cinerina/feature/app/data/i_theme_repository.dart';
-import 'package:cinerina/feature/app/data/theme_repository.dart';
-import 'package:cinerina/feature/app/logic/theme_controller.dart';
+import 'package:cinerina/feature/settings/data/i_settings_repository.dart';
+import 'package:cinerina/feature/settings/controller/theme_controller.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uikit/layout/windows_scope.dart';
 import 'package:uikit/themes/app_theme.dart';
 
-final themeModeSwitcher = ValueNotifier(ThemeMode.dark);
+class AppRoot extends StatefulWidget {
+  const AppRoot({super.key, this.pref});
 
-class AppRoot extends StatelessWidget {
-  const AppRoot({super.key, 
-     this.pref,});
+  final pref;
 
-    final pref;
+  @override
+  State<AppRoot> createState() => _AppRootState();
+}
 
+class _AppRootState extends State<AppRoot> {
+  late ThemeController themeController;
+
+  @override
+  void initState() {
+    themeController = ThemeController(
+      brightness: Brightness.light,
+      themeRepository: IThemeRepository(widget.pref),
+    );
+    super.initState();
+
+    // Слушаем изменения в контроллере
+    themeController.addListener(() {
+      setState(() {}); // обновляем UI при изменении темы
+    });
+  }
+
+  @override
+  void dispose() {
+    themeController.removeListener(() {});
+    themeController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return ValueListenableBuilder(
-      valueListenable: themeModeSwitcher,
-      builder: (context, value, child) {
-        return LayoutProvider(
-          child: MaterialApp(
-            theme: ThemeData(useMaterial3: true, extensions: [AppTheme.light]),
-            darkTheme: ThemeData(
-              useMaterial3: true,
-              extensions: [AppTheme.dark],
-            ),
-            themeMode: value,
-            home: Screen(themeController: ThemeController(brightness: Brightness.dark, themeRepository: IThemeRepository(pref)),),
-          ),
-        );
-      },
+    return LayoutProvider(
+      child: MaterialApp(
+        theme: ThemeData(useMaterial3: true, extensions: [AppTheme.light]),
+        darkTheme: ThemeData(
+          useMaterial3: true,
+          extensions: [AppTheme.dark],
+        ),
+        themeMode: themeController.isDark ? ThemeMode.dark : ThemeMode.light,
+        home: Screen(
+          themeController: themeController,
+        ),
+      ),
     );
   }
 }
@@ -41,15 +60,21 @@ class Screen extends StatelessWidget {
 
   final ThemeController themeController;
 
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).extension<AppTheme>()!.background,
       body: Center(
         child: ValueListenableBuilder(
-          valueListenable: ValueNotifier(themeController.brightness == Brightness.dark),
+          valueListenable: ValueNotifier(
+            themeController.brightness == Brightness.dark,
+          ),
           builder: (context, value, child) {
-            return Switch(value: value, onChanged: (value) => themeController.toggleTheme());
+            return Switch(
+              value: value,
+              onChanged: (value) => themeController.toggleTheme(),
+            );
           },
         ),
       ),

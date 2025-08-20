@@ -1,4 +1,4 @@
-import 'package:cinerina/feature/app/data/i_theme_repository.dart';
+import 'package:cinerina/feature/settings/data/i_settings_repository.dart';
 import 'package:flutter/material.dart';
 
 final class ThemeController extends ChangeNotifier {
@@ -15,7 +15,7 @@ final class ThemeController extends ChangeNotifier {
   get isDark => brightness == Brightness.dark;
 
   void loadTheme() async {
-    final isDark = _themeRepository.isDarkModeToggled();
+    final isDark =await _themeRepository.isDarkModeToggled();
     brightness = isDark ? Brightness.dark : Brightness.light;
     notifyListeners();
   }

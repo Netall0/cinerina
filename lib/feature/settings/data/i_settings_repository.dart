@@ -1,4 +1,4 @@
-import 'package:cinerina/feature/app/data/theme_repository.dart';
+import 'package:cinerina/feature/settings/data/settings_repository.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 final class IThemeRepository implements ThemeRepository {
@@ -9,7 +9,7 @@ final class IThemeRepository implements ThemeRepository {
   static const String _kThemeModeKey = 'isDarkModeToggled';
   
   @override
-  bool isDarkModeToggled() {
+  Future<bool>   isDarkModeToggled()async {
     return pref.getBool(_kThemeModeKey) ?? false;
 
   }
