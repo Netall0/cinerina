@@ -5,7 +5,7 @@ import 'package:uikit/layout/windows_scope.dart';
 import 'package:uikit/themes/app_theme.dart';
 
 void main(List<String> args) {
-  runApp(LayoutProvider(child: UiKitExample()));
+  runApp(LayoutScope(child: UiKitExample()));
 }
 
 final themeModeSwitcher = ValueNotifier(ThemeMode.dark);
@@ -40,7 +40,7 @@ class _UiKitExampleScreenState extends State<UiKitExampleScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context).extension<AppTheme>()!;
-    final layout = LayoutScope.of(context);
+    final layout = LayoutInherited.of(context);
     return Scaffold(
       backgroundColor: theme.background,
       body: CustomScrollView(

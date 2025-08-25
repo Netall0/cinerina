@@ -16,9 +16,7 @@ class AppConfig {
   static AppEnvironment get environment => 
       isProduction ? AppEnvironment.production : AppEnvironment.development;
   
-  static const String apiBaseUrl = isProduction 
-    ? 'https://api.myapp.com' 
-    : 'https://dev-api.myapp.com';
+
     
   // Геттеры для удобства
   static bool get isDev => !isProduction;

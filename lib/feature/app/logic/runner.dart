@@ -1,11 +1,10 @@
 import 'dart:developer';
 import 'dart:ui';
-
 import 'package:cinerina/core/config/app_config.dart';
-import 'package:cinerina/feature/app/widget/app.dart';
+import 'package:cinerina/feature/app/widget/app_scope.dart';
+import 'package:cinerina/feature/initialization/logic/composition_root.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 Future<void> runner(AppEnvironment environment) async {
   final binding = WidgetsFlutterBinding.ensureInitialized()..deferFirstFrame();
@@ -25,13 +24,11 @@ Future<void> runner(AppEnvironment environment) async {
 
   try {
     log('App run time: ${stopwatch.elapsed}');
-    final pref = await SharedPreferences.getInstance();
-    runApp(AppRoot(pref: pref));
+    final result = await CompositionRoot().compose();
+    runApp(AppScope(dependModel:result.dependModel ));
     stopwatch.stop();
     log('App run time: ${stopwatch.elapsed}');
   } on Object catch (e) {
-    print(e);
-    print('App run time: ${stopwatch.elapsed}');
   } finally {
     binding.addPostFrameCallback((_) {
       binding.allowFirstFrame();
