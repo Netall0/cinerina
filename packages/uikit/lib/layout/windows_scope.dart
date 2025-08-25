@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:uikit/layout/app_size.dart';
 
-class LayoutScope extends InheritedWidget {
+class LayoutInherited extends InheritedWidget {
   final int columns;
   final EdgeInsets padding;
   final double spacing;
   final double fontSize;
-  const LayoutScope({
+  const LayoutInherited({
     super.key,
     required this.columns,
     required super.child,
@@ -15,20 +15,22 @@ class LayoutScope extends InheritedWidget {
     required this.fontSize,
   });
 
-  static LayoutScope of(BuildContext context, {bool listen = true}) {
+  static LayoutInherited of(BuildContext context, {bool listen = true}) {
     return listen
-        ? context.dependOnInheritedWidgetOfExactType<LayoutScope>()!
-        : context.getElementForInheritedWidgetOfExactType<LayoutScope>()!.widget
-              as LayoutScope;
+        ? context.dependOnInheritedWidgetOfExactType<LayoutInherited>()!
+        : context
+                  .getElementForInheritedWidgetOfExactType<LayoutInherited>()!
+                  .widget
+              as LayoutInherited;
   }
 
   @override
-  bool updateShouldNotify(LayoutScope oldWidget) => false;
+  bool updateShouldNotify(LayoutInherited oldWidget) => false;
 }
 
-class LayoutProvider extends StatelessWidget {
+class LayoutScope extends StatelessWidget {
   final Widget child;
-  const LayoutProvider({super.key, required this.child});
+  const LayoutScope({super.key, required this.child});
 
   @override
   Widget build(BuildContext context) {
@@ -51,7 +53,7 @@ class LayoutProvider extends StatelessWidget {
           spacing = AppSizes.double12;
           sizes = EdgeInsets.all(AppSizes.double12);
         }
-        return LayoutScope(
+        return LayoutInherited(
           padding: sizes,
           spacing: spacing,
           columns: columns,
