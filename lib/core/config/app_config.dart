@@ -15,11 +15,7 @@ class AppConfig {
   // Enum на основе isProduction
   static AppEnvironment get environment => 
       isProduction ? AppEnvironment.production : AppEnvironment.development;
-  
-  static const String apiBaseUrl = isProduction 
-    ? 'https://api.myapp.com' 
-    : 'https://dev-api.myapp.com';
-    
+      
   // Геттеры для удобства
   static bool get isDev => !isProduction;
   static String get environmentName => isProduction ? 'Prod' : 'Dev';

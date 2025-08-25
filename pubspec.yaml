@@ -37,6 +37,7 @@ dependencies:
   uikit:
     path: packages/uikit
   shared_preferences: ^2.5.3
+  dio: ^5.9.0
 
 
 workspace:
