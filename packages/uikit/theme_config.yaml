@@ -1,0 +1,72 @@
+# themes.yaml
+themes:
+  light:
+    colors:
+      primary: "#2196F3"
+      secondary: "#FF9800"
+      background: "#FFFFFF"
+      surface: "#F5F5F5"
+      error: "#F44336"
+      onPrimary: "#FFFFFF"
+      onSecondary: "#000000"
+      onBackground: "#000000"
+      onSurface: "#000000"
+      onError: "#FFFFFF"
+    
+    typography:
+      fontFamily: "Roboto"
+      h1Size: 32.0
+      h2Size: 28.0
+      bodySize: 16.0
+      captionSize: 12.0
+    
+    spacing:
+      xs: 4.0
+      sm: 8.0
+      md: 16.0
+      lg: 24.0
+      xl: 32.0
+    
+    radius:
+      small: 4.0
+      medium: 8.0
+      large: 16.0
+      
+  dark:
+    colors:
+      primary: "#1976D2"
+      secondary: "#F57C00"
+      background: "#121212"
+      surface: "#1E1E1E"
+      error: "#CF6679"
+      onPrimary: "#FFFFFF"
+      onSecondary: "#000000"
+      onBackground: "#FFFFFF"
+      onSurface: "#FFFFFF"
+      onError: "#000000"
+    
+    typography:
+      fontFamily: "Roboto"
+      h1Size: 32.0
+      h2Size: 28.0
+      bodySize: 16.0
+      captionSize: 12.0
+    
+    spacing:
+      xs: 4.0
+      sm: 8.0
+      md: 16.0
+      lg: 24.0
+      xl: 32.0
+    
+    radius:
+      small: 6.0
+      medium: 12.0
+      large: 20.0
+
+components:
+  - button
+  - card
+  - input
+  - chip
+  - dialog

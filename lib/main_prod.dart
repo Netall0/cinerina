@@ -1,21 +1,15 @@
 // lib/main_prod.dart
-import 'package:cinerina/feature/app.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'dart:async';
 
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  
-  // Настройки для продакшена
-  await SystemChrome.setPreferredOrientations([
-    DeviceOrientation.portraitUp,
-  ]);
-  
-  // Отключить дебаг в продакшене
-  debugPrint = (String? message, {int? wrapWidth}) {};
-  
-  print('🚀 Starting app in PRODUCTION mode');
-  print('📡 Using production API key');
-  
-  runApp(const MyApp());
+import 'package:cinerina/core/config/app_config.dart';
+import 'package:cinerina/feature/app/logic/runner.dart';
+
+void main() async { 
+  runZonedGuarded(() => runner(AppEnvironment.production), (
+    Object error,
+    StackTrace stack,
+  ) {
+    print(error);
+    print(stack);
+  });
 }
