@@ -1,37 +1,52 @@
+import 'dart:async';
 import 'dart:developer';
 import 'dart:ui';
 import 'package:cinerina/core/config/app_config.dart';
+import 'package:cinerina/core/util/logger.dart';
 import 'package:cinerina/feature/app/widget/app_scope.dart';
 import 'package:cinerina/feature/initialization/logic/composition_root.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-Future<void> runner(AppEnvironment environment) async {
-  final binding = WidgetsFlutterBinding.ensureInitialized()..deferFirstFrame();
+final class AppRunner with LoggerMixin {
+  Future<void> runner(AppEnvironment environment) async {
+    runZonedGuarded(() async {
+      final binding = WidgetsFlutterBinding.ensureInitialized()
+        ..deferFirstFrame();
 
-  await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+      await SystemChrome.setPreferredOrientations([
+        DeviceOrientation.portraitUp,
+      ]);
 
-  PlatformDispatcher.instance.onError = (error, stack) {
-    print(error);
-    return true;
-  };
+      PlatformDispatcher.instance.onError = (error, stack) {
+        return true;
+      };
 
-  FlutterError.onError = (FlutterErrorDetails details) {
-    print(details);
-  };
+      FlutterError.onError = (FlutterErrorDetails details) {
+        FlutterError.presentError(details);
+        logError(details.exception.toString());
+      };
 
-  final Stopwatch stopwatch = Stopwatch()..start();
+      logInfo('Environment: ${environment.name}');
 
-  try {
-    log('App run time: ${stopwatch.elapsed}');
-    final result = await CompositionRoot().compose();
-    runApp(AppScope(dependModel:result.dependModel ));
-    stopwatch.stop();
-    log('App run time: ${stopwatch.elapsed}');
-  } on Object catch (e) {
-  } finally {
-    binding.addPostFrameCallback((_) {
-      binding.allowFirstFrame();
-    });
+      final Stopwatch stopwatch = Stopwatch()..start();
+
+      logInfo('App run time: ${stopwatch.elapsed}');
+
+      try {
+        logInfo('Starting app...');
+        final result = await CompositionRoot().compose();
+        runApp(AppScope(dependModel: result.dependModel));
+        stopwatch.stop();
+
+        logInfo('App run time: ${stopwatch.elapsed}');
+      } on Object catch (e) {
+        logError(e.toString());
+      } finally {
+        binding.addPostFrameCallback((_) {
+          binding.allowFirstFrame();
+        });
+      }
+    }, (error, stackTrace) => logError(error.toString(), stackTrace));
   }
 }

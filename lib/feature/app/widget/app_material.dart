@@ -25,18 +25,9 @@ class _AppMaterialState extends State<AppMaterial> {
     );
     super.initState();
 
-    // Слушаем изменения в контроллере
-    themeController.addListener(() {
-      setState(() {}); // обновляем UI при изменении темы
-    });
   }
 
-  @override
-  void dispose() {
-    themeController.removeListener(() {});
-    themeController.dispose();
-    super.dispose();
-  }
+
 
   @override
   Widget build(BuildContext context) {
