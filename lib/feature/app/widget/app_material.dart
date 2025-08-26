@@ -23,11 +23,17 @@ class _AppMaterialState extends State<AppMaterial> {
       brightness: Brightness.dark,
       themeRepository: IThemeRepository(widget.pref),
     );
-    super.initState();
 
+
+    themeController.addListener(() => setState(() {}));
+    super.initState();
   }
 
-
+  @override
+  void dispose() {
+    themeController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
