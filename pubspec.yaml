@@ -38,6 +38,7 @@ dependencies:
     path: packages/uikit
   shared_preferences: ^2.5.3
   dio: ^5.9.0
+  matomo_tracker: ^6.0.0
 
 
 workspace:

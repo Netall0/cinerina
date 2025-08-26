@@ -23,17 +23,14 @@ class _AppMaterialState extends State<AppMaterial> {
       brightness: Brightness.dark,
       themeRepository: IThemeRepository(widget.pref),
     );
-    super.initState();
 
-    // Слушаем изменения в контроллере
-    themeController.addListener(() {
-      setState(() {}); // обновляем UI при изменении темы
-    });
+
+    themeController.addListener(() => setState(() {}));
+    super.initState();
   }
 
   @override
   void dispose() {
-    themeController.removeListener(() {});
     themeController.dispose();
     super.dispose();
   }
