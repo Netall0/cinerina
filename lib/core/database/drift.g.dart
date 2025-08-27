@@ -38,9 +38,10 @@ class $SearchDriftModelTable extends SearchDriftModel
   late final GeneratedColumn<String> description = GeneratedColumn<String>(
     'description',
     aliasedName,
-    true,
+    false,
     type: DriftSqlType.string,
     requiredDuringInsert: false,
+    defaultValue: const Constant(''),
   );
   static const VerificationMeta _photoMeta = const VerificationMeta('photo');
   @override
@@ -138,7 +139,7 @@ class $SearchDriftModelTable extends SearchDriftModel
       description: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}description'],
-      ),
+      )!,
       photo: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}photo'],
@@ -160,13 +161,13 @@ class SearchDriftModelData extends DataClass
     implements Insertable<SearchDriftModelData> {
   final int id;
   final String title;
-  final String? description;
+  final String description;
   final String photo;
   final DateTime createdAt;
   const SearchDriftModelData({
     required this.id,
     required this.title,
-    this.description,
+    required this.description,
     required this.photo,
     required this.createdAt,
   });
@@ -175,9 +176,7 @@ class SearchDriftModelData extends DataClass
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
     map['title'] = Variable<String>(title);
-    if (!nullToAbsent || description != null) {
-      map['description'] = Variable<String>(description);
-    }
+    map['description'] = Variable<String>(description);
     map['photo'] = Variable<String>(photo);
     map['created_at'] = Variable<DateTime>(createdAt);
     return map;
@@ -187,9 +186,7 @@ class SearchDriftModelData extends DataClass
     return SearchDriftModelCompanion(
       id: Value(id),
       title: Value(title),
-      description: description == null && nullToAbsent
-          ? const Value.absent()
-          : Value(description),
+      description: Value(description),
       photo: Value(photo),
       createdAt: Value(createdAt),
     );
@@ -203,7 +200,7 @@ class SearchDriftModelData extends DataClass
     return SearchDriftModelData(
       id: serializer.fromJson<int>(json['id']),
       title: serializer.fromJson<String>(json['title']),
-      description: serializer.fromJson<String?>(json['description']),
+      description: serializer.fromJson<String>(json['description']),
       photo: serializer.fromJson<String>(json['photo']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
     );
@@ -214,7 +211,7 @@ class SearchDriftModelData extends DataClass
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
       'title': serializer.toJson<String>(title),
-      'description': serializer.toJson<String?>(description),
+      'description': serializer.toJson<String>(description),
       'photo': serializer.toJson<String>(photo),
       'createdAt': serializer.toJson<DateTime>(createdAt),
     };
@@ -223,13 +220,13 @@ class SearchDriftModelData extends DataClass
   SearchDriftModelData copyWith({
     int? id,
     String? title,
-    Value<String?> description = const Value.absent(),
+    String? description,
     String? photo,
     DateTime? createdAt,
   }) => SearchDriftModelData(
     id: id ?? this.id,
     title: title ?? this.title,
-    description: description.present ? description.value : this.description,
+    description: description ?? this.description,
     photo: photo ?? this.photo,
     createdAt: createdAt ?? this.createdAt,
   );
@@ -273,7 +270,7 @@ class SearchDriftModelData extends DataClass
 class SearchDriftModelCompanion extends UpdateCompanion<SearchDriftModelData> {
   final Value<int> id;
   final Value<String> title;
-  final Value<String?> description;
+  final Value<String> description;
   final Value<String> photo;
   final Value<DateTime> createdAt;
   const SearchDriftModelCompanion({
@@ -311,7 +308,7 @@ class SearchDriftModelCompanion extends UpdateCompanion<SearchDriftModelData> {
   SearchDriftModelCompanion copyWith({
     Value<int>? id,
     Value<String>? title,
-    Value<String?>? description,
+    Value<String>? description,
     Value<String>? photo,
     Value<DateTime>? createdAt,
   }) {
@@ -375,7 +372,7 @@ typedef $$SearchDriftModelTableCreateCompanionBuilder =
     SearchDriftModelCompanion Function({
       Value<int> id,
       required String title,
-      Value<String?> description,
+      Value<String> description,
       required String photo,
       required DateTime createdAt,
     });
@@ -383,7 +380,7 @@ typedef $$SearchDriftModelTableUpdateCompanionBuilder =
     SearchDriftModelCompanion Function({
       Value<int> id,
       Value<String> title,
-      Value<String?> description,
+      Value<String> description,
       Value<String> photo,
       Value<DateTime> createdAt,
     });
@@ -524,7 +521,7 @@ class $$SearchDriftModelTableTableManager
               ({
                 Value<int> id = const Value.absent(),
                 Value<String> title = const Value.absent(),
-                Value<String?> description = const Value.absent(),
+                Value<String> description = const Value.absent(),
                 Value<String> photo = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
               }) => SearchDriftModelCompanion(
@@ -538,7 +535,7 @@ class $$SearchDriftModelTableTableManager
               ({
                 Value<int> id = const Value.absent(),
                 required String title,
-                Value<String?> description = const Value.absent(),
+                Value<String> description = const Value.absent(),
                 required String photo,
                 required DateTime createdAt,
               }) => SearchDriftModelCompanion.insert(

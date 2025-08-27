@@ -6,7 +6,7 @@ part 'drift.g.dart';
 
 @DriftDatabase(tables: [SearchDriftModel])
 class AppDatabase extends _$AppDatabase {
-  AppDatabase.defaults({required String name})
+  AppDatabase({required String name})
     : super(
         driftDatabase(
           name: name,
