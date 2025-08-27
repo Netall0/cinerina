@@ -86,7 +86,7 @@ clean: check_fvm
 # Запуск в режиме разработки (с дефолтным API ключом)
 run-dev: check_fvm
 	@echo "$(GREEN)Запуск в режиме разработки...$(NC)"
-	$(FLUTTER) run --debug --flavor dev lib/main_dev.dart --dart-define=API_KEY=$(API_KEY_PROD)
+	$(FLUTTER) run  --debug --flavor dev lib/main_dev.dart --dart-define=API_KEY=$(API_KEY_PROD)
 
 # Запуск в режиме разработки без API ключа
 run-dev-no-key: check_fvm
@@ -96,7 +96,7 @@ run-dev-no-key: check_fvm
 # Запуск с продакшен конфигом (с реальным API ключом)
 run-prod: check_fvm
 	@echo "$(GREEN)Запуск с продакшен API ключом...$(NC)"
-	$(FLUTTER) run --flavor prod lib/main_prod.dart --dart-define=API_KEY=$(API_KEY_PROD)
+	$(FLUTTER) run  --release --flavor prod lib/main_prod.dart --dart-define=API_KEY=$(API_KEY_PROD) 
 
 # Запуск продакшен версии без API ключа  
 run-prod-no-key: check_fvm

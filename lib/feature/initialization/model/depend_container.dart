@@ -1,4 +1,3 @@
-import 'package:cinerina/core/util/logger.dart';
 import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
