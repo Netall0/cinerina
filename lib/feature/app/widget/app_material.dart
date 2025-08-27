@@ -1,4 +1,6 @@
 import 'package:cinerina/core/config/app_config.dart';
+import 'package:cinerina/feature/search/data/i_search_repository.dart';
+import 'package:cinerina/feature/search/data/search_repository.dart';
 import 'package:cinerina/feature/settings/data/i_settings_repository.dart';
 import 'package:cinerina/feature/settings/controller/theme_controller.dart';
 import 'package:flutter/material.dart';
@@ -16,14 +18,17 @@ class AppMaterial extends StatefulWidget {
 
 class _AppMaterialState extends State<AppMaterial> {
   late ThemeController themeController;
+  late ISearchRepository settingsRepository;
+
+  final SearchRepository searchRepository = ISearchRepository();
 
   @override
   void initState() {
+    searchRepository.searchMovies('f');
     themeController = ThemeController(
       brightness: Brightness.dark,
       themeRepository: IThemeRepository(widget.pref),
     );
-
 
     themeController.addListener(() => setState(() {}));
     super.initState();

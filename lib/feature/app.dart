@@ -43,7 +43,7 @@ class HomeScreen extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             Text(
-              'Base URL: ${AppConfig.apiBaseUrl}',
+              'Base URL: ${AppConfig.apiKey}',
               style: Theme.of(context).textTheme.bodyMedium,
             ),
           ],
