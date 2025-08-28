@@ -14,7 +14,7 @@ class AppScope extends StatelessWidget {
     return LayoutScope(
       child: DependScope(
         dependModel: dependModel,
-        child: AppMaterial(pref: dependModel.sharedPreferences),
+        child: AppMaterial(),
       ),
     );
   }

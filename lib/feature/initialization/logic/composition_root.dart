@@ -1,7 +1,11 @@
 import 'package:cinerina/core/util/logger.dart';
 import 'package:cinerina/feature/initialization/model/depend_container.dart';
+import 'package:cinerina/feature/settings/controller/settings_controller.dart';
+import 'package:cinerina/feature/settings/data/i_settings_repository.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:uikit/utils/layout_type_enum.dart';
 
 final class CompositionRoot {
   Future<InheritedResult> compose() async {
@@ -27,8 +31,16 @@ final class CompositionRoot {
   Future<DependContainer> _initDepend(AppLogger logger) async {
     final sharedPreferences = await _initSharedPreferences(logger);
     final dio = _initDio(logger);
+    final themeController = SettingsController(
+      brightness: Brightness.dark,
+      themeRepository: ISettingsRepository(sharedPreferences: sharedPreferences), layoutType: LayoutType.list,
+    );
 
-    return DependContainer(sharedPreferences: sharedPreferences, dio: dio);
+    return DependContainer(
+      sharedPreferences: sharedPreferences,
+      dio: dio,
+      themeController: themeController,
+    );
   }
 
   /// Инициализация SharedPreferences
