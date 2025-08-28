@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:developer';
 import 'dart:ui';
 import 'package:cinerina/core/config/app_config.dart';
 import 'package:cinerina/core/util/logger.dart';

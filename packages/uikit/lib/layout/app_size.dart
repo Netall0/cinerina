@@ -1,5 +1,10 @@
+import 'package:flutter/material.dart';
+
 /// Frequent sizes.
 abstract class AppSizes {
+  static double screenHeight(BuildContext context) =>
+      MediaQuery.of(context).size.height;
+
   /// Value double 0.
   static const double0 = 0.0;
 

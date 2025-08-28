@@ -1,6 +1,9 @@
-abstract interface class ThemeRepository {
+abstract interface class SettingsRepository {
   Future<void> setThemeModeToggled(bool selected);
 
-  Future<bool> isDarkModeToggled();
-  
+  bool isDarkModeToggled();
+
+  Future<void> setLayoutToggled(bool selected);
+
+  bool isListLayoutToggled();
 }

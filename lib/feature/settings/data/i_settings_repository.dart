@@ -1,24 +1,35 @@
+
 import 'package:cinerina/feature/settings/data/settings_repository.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-final class IThemeRepository implements ThemeRepository {
-  IThemeRepository(this.pref): super();
+final class ISettingsRepository implements SettingsRepository {
+  ISettingsRepository({required SharedPreferences sharedPreferences})
+    : _pref = sharedPreferences;
 
-  final SharedPreferences pref;
+  final SharedPreferences _pref;
 
   static const String _kThemeModeKey = 'isDarkModeToggled';
-  
+
+  static const String _kLayoutTypeKey = 'isListLayoutToggled';
+
   @override
-  Future<bool>   isDarkModeToggled()async {
-    return pref.getBool(_kThemeModeKey) ?? false;
-
+  bool isDarkModeToggled() {
+    return _pref.getBool(_kThemeModeKey) ?? false;
   }
-  
+
   @override
-  Future<void> setThemeModeToggled(bool selected) async{
-    await pref.setBool(_kThemeModeKey, selected);
+  Future<void> setThemeModeToggled(bool selected) async {
+    await _pref.setBool(_kThemeModeKey, selected);
   }
-  
 
+  @override
+  bool isListLayoutToggled() {
+    return _pref.getBool(_kLayoutTypeKey) ?? false;
+  }
 
+  @override
+  Future<void> setLayoutToggled(bool selected) async {
+    await _pref.setBool(_kLayoutTypeKey, selected);
+  }
 }
+

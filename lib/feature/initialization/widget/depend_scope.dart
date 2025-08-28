@@ -2,7 +2,7 @@ import 'package:cinerina/feature/initialization/model/depend_container.dart';
 import 'package:flutter/material.dart';
 
 final class DependScope extends InheritedWidget {
-  DependScope({required super.child, required this.dependModel});
+  const DependScope({required super.child, required this.dependModel});
 
   final DependContainer dependModel;
 
@@ -12,5 +12,7 @@ final class DependScope extends InheritedWidget {
             as DependScope;
 
   @override
-  bool updateShouldNotify(covariant InheritedWidget oldWidget) => false;
+  bool updateShouldNotify(covariant DependScope oldWidget) {
+    return dependModel != oldWidget.dependModel;
+  }
 }
