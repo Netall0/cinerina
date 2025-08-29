@@ -1,5 +1,8 @@
+import 'package:cinerina/core/util/logger.dart';
 import 'package:cinerina/feature/initialization/widget/depend_scope.dart';
+import 'package:cinerina/feature/search/bloc/search_bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:uikit/layout/app_size.dart';
 import 'package:uikit/themes/app_theme.dart';
 import 'package:uikit/utils/layout_type_enum.dart';
@@ -11,14 +14,14 @@ class SearchScreen extends StatefulWidget {
   State<SearchScreen> createState() => _SearchScreenState();
 }
 
-class _SearchScreenState extends State<SearchScreen> {
+class _SearchScreenState extends State<SearchScreen> with LoggerMixin {
   @override
   Widget build(BuildContext context) {
     final themeController = DependScope.of(context).dependModel.themeController;
     final theme = Theme.of(context).extension<AppTheme>()!;
 
     return Scaffold(
-      backgroundColor: theme.background ,
+      backgroundColor: theme.background,
       body: CustomScrollView(
         slivers: [
           SliverAppBar(
@@ -43,7 +46,7 @@ class _SearchScreenState extends State<SearchScreen> {
                       Switch.adaptive(
                         value: themeController.isDark,
                         onChanged: (value) {
-                          print(
+                          logInfo(
                             '🌙 Theme toggle: ${themeController.isDark} -> switching',
                           );
                           themeController.toggleTheme();
@@ -66,10 +69,10 @@ class _SearchScreenState extends State<SearchScreen> {
                       Switch.adaptive(
                         value: themeController.isList,
                         onChanged: (value) {
-                          print(
+                          logInfo(
                             '🎛️ Layout toggle: ${themeController.isList} -> switching',
                           );
-                          print(
+                          logInfo(
                             '📋 layoutType: ${themeController.layoutType}',
                           );
                           themeController.toggleLayout();
@@ -82,55 +85,71 @@ class _SearchScreenState extends State<SearchScreen> {
             ],
           ),
 
-          // Контент тоже в ListenableBuilder
-          themeController.isList
-              ? SliverList(
-                  delegate: SliverChildBuilderDelegate(
-                    (context, index) => Container(
-                      height: 80,
-                      margin: EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        color: Colors.yellow,
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Center(
-                        child: Text(
-                          'LIST Item $index',
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                    ),
-                    childCount: 20,
-                  ),
-                )
-              : SliverGrid(
-                  delegate: SliverChildBuilderDelegate(
-                    (context, index) => Container(
-                      margin: EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        color: Colors.blue,
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Center(
-                        child: Text(
-                          'GRID Item $index',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ),
-                    childCount: 20,
-                  ),
-                  gridDelegate:
-                      const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2,
-                        crossAxisSpacing: 8,
-                        mainAxisSpacing: 8,
-                        childAspectRatio: 1.0,
-                      ),
+          BlocBuilder<SearchBloc, SearchState>(
+            builder: (context, state) {
+              return switch (state) {
+                SearchInitial() => SliverToBoxAdapter(child: Container()),
+                SearchLoading() => SliverToBoxAdapter(
+                  child: Center(child: CircularProgressIndicator.adaptive()),
                 ),
+                SearchLoaded() =>
+                  themeController.isList
+                      ? SliverList(
+                          delegate: SliverChildBuilderDelegate(
+                            (context, index) => Container(
+                              height: 80,
+                              margin: EdgeInsets.all(8),
+                              decoration: BoxDecoration(
+                                color: Colors.yellow,
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Center(
+                                child: Text(
+                                  state.searchList.docs?[index].name ??
+                                      '',
+                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                            ),
+                            childCount: state.searchList.docs?.length ?? 0,
+                          ),
+                        )
+                      : SliverGrid(
+                          delegate: SliverChildBuilderDelegate(
+                            (context, index) => Container(
+                              margin: EdgeInsets.all(8),
+                              decoration: BoxDecoration(
+                                color: Colors.blue,
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Center(
+                                child: Text(
+                                  state
+                                          .searchList
+                                          .docs?[index]
+                                          .name ??
+                                      '',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            childCount: state.searchList.docs?.length ?? 0,
+                          ),
+                          gridDelegate:
+                              const SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: 2,
+                                crossAxisSpacing: 8,
+                                mainAxisSpacing: 8,
+                                childAspectRatio: 1.0,
+                              ),
+                        ),
+                SearchError() => SliverToBoxAdapter(child: Container()),
+              };
+            },
+          ),
         ],
       ),
     );

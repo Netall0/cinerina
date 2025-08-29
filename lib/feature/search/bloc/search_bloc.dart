@@ -1,13 +1,37 @@
-import 'package:bloc/bloc.dart';
-import 'package:meta/meta.dart';
+import 'package:cinerina/core/bloc/bloc_transformer.dart';
+import 'package:cinerina/feature/search/data/i_search_repository.dart';
+import 'package:cinerina/feature/search/model/search_model.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 part 'search_event.dart';
 part 'search_state.dart';
 
 class SearchBloc extends Bloc<SearchEvent, SearchState> {
-  SearchBloc() : super(SearchInitial()) {
-    on<SearchEvent>((event, emit) {
-      // TODO: implement event handler
-    });
+  final ISearchRepository _searchRepository;
+
+  SearchBloc({required ISearchRepository searchRepository})
+    : _searchRepository = searchRepository,
+      super(SearchInitial()) {
+
+    on<SearchEvent>(
+      (event, emit) => switch(event){
+        SearchMovie() => _searchMovies(event, emit),
+      },transformer: BlocTransformer.sequential(),
+  
+    );
+  }
+
+  Future<void> _searchMovies(
+    SearchMovie event,
+    Emitter<SearchState> emit,
+  ) async {
+    emit(SearchLoading());
+    try {
+      final result = await _searchRepository.searchMovies(event.query);
+      emit(SearchLoaded(searchList: result ));
+    } catch (e) {
+      emit(SearchError(e.toString()));
+    }
   }
 }

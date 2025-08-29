@@ -41,60 +41,88 @@ class SearchModel {
 class Doc {
   @JsonKey(name: "id")
   final int? id;
+
   @JsonKey(name: "name")
-  final NameEnum? name;
+  final String? name; 
+
   @JsonKey(name: "alternativeName")
   final String? alternativeName;
+
   @JsonKey(name: "enName")
   final String? enName;
-  @JsonKey(name: "type")
-  final Type? type;
+
+  @JsonKey(name: "type", unknownEnumValue: Type.UNKNOWN)
+  final Type? type; 
+
   @JsonKey(name: "year")
   final int? year;
+
   @JsonKey(name: "description")
   final String? description;
+
   @JsonKey(name: "shortDescription")
   final String? shortDescription;
+
   @JsonKey(name: "movieLength")
   final int? movieLength;
+
   @JsonKey(name: "isSeries")
   final bool? isSeries;
+
   @JsonKey(name: "ticketsOnSale")
   final bool? ticketsOnSale;
+
   @JsonKey(name: "totalSeriesLength")
   final dynamic totalSeriesLength;
+
   @JsonKey(name: "seriesLength")
   final int? seriesLength;
+
   @JsonKey(name: "ratingMpaa")
   final String? ratingMpaa;
+
   @JsonKey(name: "ageRating")
   final int? ageRating;
+
   @JsonKey(name: "top10")
   final dynamic top10;
+
   @JsonKey(name: "top250")
   final dynamic top250;
+
   @JsonKey(name: "typeNumber")
   final int? typeNumber;
+
   @JsonKey(name: "status")
   final String? status;
+
   @JsonKey(name: "names")
   final List<NameElement>? names;
+
   @JsonKey(name: "externalId")
   final ExternalId? externalId;
+
   @JsonKey(name: "logo")
   final Backdrop? logo;
+
   @JsonKey(name: "poster")
   final Backdrop? poster;
+
   @JsonKey(name: "backdrop")
   final Backdrop? backdrop;
+
   @JsonKey(name: "rating")
   final Rating? rating;
+
   @JsonKey(name: "votes")
   final Rating? votes;
+
   @JsonKey(name: "genres")
   final List<Country>? genres;
+
   @JsonKey(name: "countries")
   final List<Country>? countries;
+
   @JsonKey(name: "releaseYears")
   final List<ReleaseYear>? releaseYears;
 
@@ -129,68 +157,6 @@ class Doc {
     this.countries,
     this.releaseYears,
   });
-
-  Doc copyWith({
-    int? id,
-    NameEnum? name,
-    String? alternativeName,
-    String? enName,
-    Type? type,
-    int? year,
-    String? description,
-    String? shortDescription,
-    int? movieLength,
-    bool? isSeries,
-    bool? ticketsOnSale,
-    dynamic totalSeriesLength,
-    int? seriesLength,
-    String? ratingMpaa,
-    int? ageRating,
-    dynamic top10,
-    dynamic top250,
-    int? typeNumber,
-    String? status,
-    List<NameElement>? names,
-    ExternalId? externalId,
-    Backdrop? logo,
-    Backdrop? poster,
-    Backdrop? backdrop,
-    Rating? rating,
-    Rating? votes,
-    List<Country>? genres,
-    List<Country>? countries,
-    List<ReleaseYear>? releaseYears,
-  }) => Doc(
-    id: id ?? this.id,
-    name: name ?? this.name,
-    alternativeName: alternativeName ?? this.alternativeName,
-    enName: enName ?? this.enName,
-    type: type ?? this.type,
-    year: year ?? this.year,
-    description: description ?? this.description,
-    shortDescription: shortDescription ?? this.shortDescription,
-    movieLength: movieLength ?? this.movieLength,
-    isSeries: isSeries ?? this.isSeries,
-    ticketsOnSale: ticketsOnSale ?? this.ticketsOnSale,
-    totalSeriesLength: totalSeriesLength ?? this.totalSeriesLength,
-    seriesLength: seriesLength ?? this.seriesLength,
-    ratingMpaa: ratingMpaa ?? this.ratingMpaa,
-    ageRating: ageRating ?? this.ageRating,
-    top10: top10 ?? this.top10,
-    top250: top250 ?? this.top250,
-    typeNumber: typeNumber ?? this.typeNumber,
-    status: status ?? this.status,
-    names: names ?? this.names,
-    externalId: externalId ?? this.externalId,
-    logo: logo ?? this.logo,
-    poster: poster ?? this.poster,
-    backdrop: backdrop ?? this.backdrop,
-    rating: rating ?? this.rating,
-    votes: votes ?? this.votes,
-    genres: genres ?? this.genres,
-    countries: countries ?? this.countries,
-    releaseYears: releaseYears ?? this.releaseYears,
-  );
 
   factory Doc.fromJson(Map<String, dynamic> json) => _$DocFromJson(json);
 
@@ -260,6 +226,8 @@ enum NameEnum {
   NAME,
   @JsonValue("Гонщик Формулы-1")
   THE_1,
+  @JsonValue("unknown")
+  UNKNOWN,
 }
 
 @JsonSerializable()
@@ -349,4 +317,5 @@ enum Type {
   ANIME,
   @JsonValue("movie")
   MOVIE,
+  UNKNOWN, // 👈 добавлен fallback
 }
