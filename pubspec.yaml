@@ -45,6 +45,7 @@ dependencies:
   drift_flutter: ^0.2.5
   drift_dev: ^2.28.1
   json_annotation: ^4.9.0
+  bloc_concurrency: ^0.3.0
 
 
 workspace:

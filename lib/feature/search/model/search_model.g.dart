@@ -27,10 +27,14 @@ Map<String, dynamic> _$SearchModelToJson(SearchModel instance) =>
 
 Doc _$DocFromJson(Map<String, dynamic> json) => Doc(
   id: (json['id'] as num?)?.toInt(),
-  name: $enumDecodeNullable(_$NameEnumEnumMap, json['name']),
+  name: json['name'] as String?,
   alternativeName: json['alternativeName'] as String?,
   enName: json['enName'] as String?,
-  type: $enumDecodeNullable(_$TypeEnumMap, json['type']),
+  type: $enumDecodeNullable(
+    _$TypeEnumMap,
+    json['type'],
+    unknownValue: Type.UNKNOWN,
+  ),
   year: (json['year'] as num?)?.toInt(),
   description: json['description'] as String?,
   shortDescription: json['shortDescription'] as String?,
@@ -79,7 +83,7 @@ Doc _$DocFromJson(Map<String, dynamic> json) => Doc(
 
 Map<String, dynamic> _$DocToJson(Doc instance) => <String, dynamic>{
   'id': instance.id,
-  'name': _$NameEnumEnumMap[instance.name],
+  'name': instance.name,
   'alternativeName': instance.alternativeName,
   'enName': instance.enName,
   'type': _$TypeEnumMap[instance.type],
@@ -109,13 +113,11 @@ Map<String, dynamic> _$DocToJson(Doc instance) => <String, dynamic>{
   'releaseYears': instance.releaseYears,
 };
 
-const _$NameEnumEnumMap = {
-  NameEnum.EMPTY: 'Проклятая школа',
-  NameEnum.NAME: '',
-  NameEnum.THE_1: 'Гонщик Формулы-1',
+const _$TypeEnumMap = {
+  Type.ANIME: 'anime',
+  Type.MOVIE: 'movie',
+  Type.UNKNOWN: 'UNKNOWN',
 };
-
-const _$TypeEnumMap = {Type.ANIME: 'anime', Type.MOVIE: 'movie'};
 
 Backdrop _$BackdropFromJson(Map<String, dynamic> json) => Backdrop(
   url: json['url'] as String?,
