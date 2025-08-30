@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:theme_tailor_annotation/theme_tailor_annotation.dart';
+import 'package:uikit/layout/app_size.dart';
 import '../color/colors.dart';
 import '../fonts/typography.dart';
 
@@ -142,210 +143,220 @@ class AppTheme extends ThemeExtension<AppTheme> with _$AppThemeTailorMixin {
   @override
   final List<BoxShadow> shadowElevation2;
 
-  static const light = AppTheme(
-    // Colors
+static const light = AppTheme(
+    // Colors - четкие контрастные цвета
     primary: ThemeConstants.primaryLight,
-    primaryVariant: Color(0xFF1565C0),
+    primaryVariant: Color(0xFF1E40AF), // Темнее основного
     secondary: ThemeConstants.secondaryLight,
     background: ThemeConstants.backgroundLight,
     surface: ThemeConstants.surfaceLight,
-    error: Color(0xFFB00020),
+    error: ThemeConstants.errorLight,
+
+    // Контрастные цвета - четкие
     onPrimary: Colors.white,
-    onSecondary: Colors.black,
-    onBackground: Colors.black87,
-    onSurface: Colors.black87,
+    onSecondary: Colors.white,
+    onBackground: ThemeConstants.textPrimaryLight,
+    onSurface: ThemeConstants.textPrimaryLight,
     onError: Colors.white,
-    
-    // Text colors
-    textPrimary: Colors.black87,
-    textSecondary: Colors.black54,
-    textDisabled: Colors.black38,
-    
+
+    // Text colors - максимальный контраст
+    textPrimary: ThemeConstants.textPrimaryLight,
+    textSecondary: ThemeConstants.textSecondaryLight,
+    textDisabled: ThemeConstants.textDisabledLight,
+
     // Typography
-    
-    // Text styles
+    headlineFont: ThemeConstants.fontFamily,
+    bodyFont: ThemeConstants.fontFamilyBody,
+
+    // Text styles - четкая иерархия
     h1: TextStyle(
       fontSize: AppTypography.h1,
       fontWeight: FontWeight.bold,
       height: AppTypography.lineHeightTight,
       letterSpacing: AppTypography.letterSpacingTight,
-      color: Colors.black87,
+      color: ThemeConstants.textPrimaryLight, // Черный
     ),
     h2: TextStyle(
       fontSize: AppTypography.h2,
       fontWeight: FontWeight.bold,
       height: AppTypography.lineHeightTight,
-      color: Colors.black87,
+      color: ThemeConstants.textPrimaryLight, // Черный
     ),
     h3: TextStyle(
       fontSize: AppTypography.h3,
       fontWeight: FontWeight.w600,
       height: AppTypography.lineHeightNormal,
-      color: Colors.black87,
+      color: ThemeConstants.gray700, // Темно-серый - контрастный
     ),
     h4: TextStyle(
       fontSize: AppTypography.h4,
       fontWeight: FontWeight.w600,
       height: AppTypography.lineHeightNormal,
-      color: Colors.black87,
+      color: ThemeConstants.gray700, // Темно-серый
     ),
     h5: TextStyle(
       fontSize: AppTypography.h5,
       fontWeight: FontWeight.w500,
       height: AppTypography.lineHeightNormal,
-      color: Colors.black87,
+      color: ThemeConstants.gray600, // Средне-серый
     ),
     h6: TextStyle(
       fontSize: AppTypography.h6,
       fontWeight: FontWeight.w500,
       height: AppTypography.lineHeightNormal,
-      color: Colors.black87,
+      color: ThemeConstants.gray600, // Средне-серый
     ),
     bodyLarge: TextStyle(
       fontSize: AppTypography.bodyLarge,
       fontWeight: FontWeight.normal,
       height: AppTypography.lineHeightRelaxed,
-      color: Colors.black87,
+      color: ThemeConstants.textPrimaryLight, // Основной черный текст
     ),
     bodyMedium: TextStyle(
       fontSize: AppTypography.bodyMedium,
       fontWeight: FontWeight.normal,
       height: AppTypography.lineHeightRelaxed,
-      color: Colors.black54,
+      color: ThemeConstants.textSecondaryLight, // Серый - но читаемый
     ),
     bodySmall: TextStyle(
       fontSize: AppTypography.bodySmall,
       fontWeight: FontWeight.normal,
       height: AppTypography.lineHeightNormal,
-      color: Colors.black54,
+      color: ThemeConstants.textSecondaryLight,
     ),
     caption: TextStyle(
       fontSize: AppTypography.caption,
       fontWeight: FontWeight.normal,
-      color: Colors.black54,
+      color: ThemeConstants.textDisabledLight, // Светло-серый
     ),
     overline: TextStyle(
       fontSize: AppTypography.overline,
       fontWeight: FontWeight.w500,
       letterSpacing: AppTypography.letterSpacingWide,
-      color: Colors.black54,
+      color: ThemeConstants.textDisabledLight,
     ),
-    
-    // Components
-    cardBackground: Colors.white,
-    dividerColor: Color(0xFFE0E0E0),
-    shadowColor: Colors.black26,
-    
-    // Dimensions
-    borderRadiusSmall: ThemeConstants.radiusSmall,
-    borderRadiusMedium: ThemeConstants.radiusMedium,
-    borderRadiusLarge: ThemeConstants.radiusLarge, headlineFont: '', bodyFont: '', shadowElevation1: [], shadowElevation2: [],
-    
 
+    // Components - контрастные
+    cardBackground: ThemeConstants.cardBackgroundLight,
+    dividerColor: ThemeConstants.dividerColorLight,
+    shadowColor: ThemeConstants.shadowColorLight,
+
+    // Dimensions
+    borderRadiusSmall: AppSizes.radiusSmall,
+    borderRadiusMedium: AppSizes.radiusMedium,
+    borderRadiusLarge: AppSizes.radiusLarge,
+
+    // Shadows
+    shadowElevation1: ThemeConstants.shadowElevation1,
+    shadowElevation2: ThemeConstants.shadowElevation2,
   );
 
   static const dark = AppTheme(
-    // Colors
+    // Colors - яркие для темной темы
     primary: ThemeConstants.primaryDark,
-    primaryVariant: Color(0xFF1E88E5),
+    primaryVariant: Color(0xFF3B82F6), // Ярче основного
     secondary: ThemeConstants.secondaryDark,
     background: ThemeConstants.backgroundDark,
     surface: ThemeConstants.surfaceDark,
-    error: Color(0xFFCF6679),
-    onPrimary: Colors.black,
-    onSecondary: Colors.black,
-    onBackground: Colors.white,
-    onSurface: Colors.white,
-    onError: Colors.black,
-    
-    // Text colors
-    textPrimary: Colors.white,
-    textSecondary: Colors.white70,
-    textDisabled: Colors.white38,
-    
+    error: ThemeConstants.errorDark,
+
+    // Контрастные цвета для темной темы
+    onPrimary: ThemeConstants.backgroundDark, // Темный текст на ярком фоне
+    onSecondary: ThemeConstants.backgroundDark,
+    onBackground: ThemeConstants.textPrimaryDark,
+    onSurface: ThemeConstants.textPrimaryDark,
+    onError: ThemeConstants.backgroundDark,
+
+    // Text colors - яркие для темного фона
+    textPrimary: ThemeConstants.textPrimaryDark,
+    textSecondary: ThemeConstants.textSecondaryDark,
+    textDisabled: ThemeConstants.textDisabledDark,
+
     // Typography
-    
-    // Text styles (тёмная тема)
+    headlineFont: ThemeConstants.fontFamily,
+    bodyFont: ThemeConstants.fontFamilyBody,
+
+    // Text styles - яркие цвета для читаемости
     h1: TextStyle(
       fontSize: AppTypography.h1,
       fontWeight: FontWeight.bold,
       height: AppTypography.lineHeightTight,
       letterSpacing: AppTypography.letterSpacingTight,
-      color: Colors.white,
+      color: ThemeConstants.textPrimaryDark, // Яркий белый
     ),
     h2: TextStyle(
       fontSize: AppTypography.h2,
       fontWeight: FontWeight.bold,
       height: AppTypography.lineHeightTight,
-      color: Colors.white,
+      color: ThemeConstants.textPrimaryDark, // Яркий белый
     ),
     h3: TextStyle(
       fontSize: AppTypography.h3,
       fontWeight: FontWeight.w600,
       height: AppTypography.lineHeightNormal,
-      color: Colors.white,
+      color: ThemeConstants.slate200, // Светло-серый - контрастный
     ),
     h4: TextStyle(
       fontSize: AppTypography.h4,
       fontWeight: FontWeight.w600,
       height: AppTypography.lineHeightNormal,
-      color: Colors.white,
+      color: ThemeConstants.slate200,
     ),
     h5: TextStyle(
       fontSize: AppTypography.h5,
       fontWeight: FontWeight.w500,
       height: AppTypography.lineHeightNormal,
-      color: Colors.white,
+      color: ThemeConstants.slate300, // Еще светлее
     ),
     h6: TextStyle(
       fontSize: AppTypography.h6,
       fontWeight: FontWeight.w500,
       height: AppTypography.lineHeightNormal,
-      color: Colors.white,
+      color: ThemeConstants.slate300,
     ),
     bodyLarge: TextStyle(
       fontSize: AppTypography.bodyLarge,
       fontWeight: FontWeight.normal,
       height: AppTypography.lineHeightRelaxed,
-      color: Colors.white,
+      color: ThemeConstants.textPrimaryDark, // Основной яркий текст
     ),
     bodyMedium: TextStyle(
       fontSize: AppTypography.bodyMedium,
       fontWeight: FontWeight.normal,
       height: AppTypography.lineHeightRelaxed,
-      color: Colors.white70,
+      color: ThemeConstants.textSecondaryDark, // Вторичный - но читаемый
     ),
     bodySmall: TextStyle(
       fontSize: AppTypography.bodySmall,
       fontWeight: FontWeight.normal,
       height: AppTypography.lineHeightNormal,
-      color: Colors.white70,
+      color: ThemeConstants.textSecondaryDark,
     ),
     caption: TextStyle(
       fontSize: AppTypography.caption,
       fontWeight: FontWeight.normal,
-      color: Colors.white70,
+      color: ThemeConstants.textDisabledDark, // Приглушенный
     ),
     overline: TextStyle(
       fontSize: AppTypography.overline,
       fontWeight: FontWeight.w500,
       letterSpacing: AppTypography.letterSpacingWide,
-      color: Colors.white70,
+      color: ThemeConstants.textDisabledDark,
     ),
-    
-    // Components
-    cardBackground: Color(0xFF2C2C2C),
-    dividerColor: Color(0xFF424242),
-    shadowColor: Colors.black54,
-    
-    // Dimensions
-    borderRadiusSmall: ThemeConstants.radiusSmall,
-    borderRadiusMedium: ThemeConstants.radiusMedium,
-    borderRadiusLarge: ThemeConstants.radiusLarge,
-    
-    // Shadows
-    shadowElevation1: ThemeConstants.shadowElevation1, headlineFont: '', bodyFont: '', shadowElevation2: [],
 
+    // Components - контрастные для темной темы
+    cardBackground: ThemeConstants.cardBackgroundDark,
+    dividerColor: ThemeConstants.dividerColorDark,
+    shadowColor: ThemeConstants.shadowColorDark,
+
+    // Dimensions
+    borderRadiusSmall: AppSizes.radiusSmall,
+    borderRadiusMedium: AppSizes.radiusMedium,
+    borderRadiusLarge: AppSizes.radiusLarge,
+
+    // Shadows - более выраженные для темной темы
+    shadowElevation1: ThemeConstants.shadowElevation1Dark,
+    shadowElevation2: ThemeConstants.shadowElevation2Dark,
   );
 }
 
