@@ -5,6 +5,23 @@ abstract class AppSizes {
   static double screenHeight(BuildContext context) =>
       MediaQuery.of(context).size.height;
 
+  static const spacing4 = 4.0;
+  static const spacing8 = 8.0;
+  static const spacing12 = 12.0;
+  static const spacing16 = 16.0;
+  static const spacing20 = 20.0;
+  static const spacing24 = 24.0;
+  static const spacing32 = 32.0;
+  static const spacing48 = 48.0;
+  static const spacing64 = 64.0;
+
+  // Border radius
+  static const radiusSmall = 8.0;
+  static const radiusMedium = 12.0;
+  static const radiusLarge = 16.0;
+  static const radiusXLarge = 24.0;
+  static const radiusRound = 999.0;
+
   /// Value double 0.
   static const double0 = 0.0;
 
