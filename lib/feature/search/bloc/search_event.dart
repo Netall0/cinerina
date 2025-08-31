@@ -2,16 +2,21 @@ part of 'search_bloc.dart';
 
 @immutable
 sealed class SearchEvent {
-  const SearchEvent({this.query});
+  const SearchEvent({this.query, this.completer});
 
   final String? query;
+
+  final Completer? completer;
 }
 
 final class SearchMovie extends SearchEvent {
-  const SearchMovie({required this.query});
+  const SearchMovie({required this.query, this.completer});
 
   @override
   final String query;
+
+  @override
+  final Completer? completer;
 
   @override
   int get hashCode => Object.hashAll([query]);
