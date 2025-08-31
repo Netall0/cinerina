@@ -47,6 +47,23 @@ final class SearchLoaded extends SearchState {
 
 }
 
+
+final class SearchEmpty extends SearchState {
+  const SearchEmpty({super.searchList, this.query});
+
+  final String? query;
+
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is SearchEmpty && searchList == other.searchList;
+
+
+  @override
+  int get hashCode => Object.hashAll([searchList]);
+}
+
 final class SearchError extends SearchState {
   const SearchError(this.error, {super.searchList});
 

@@ -13,6 +13,8 @@ final class AppRunner with LoggerMixin {
       final binding = WidgetsFlutterBinding.ensureInitialized()
         ..deferFirstFrame();
 
+
+
       await SystemChrome.setPreferredOrientations([
         DeviceOrientation.portraitUp,
       ]);

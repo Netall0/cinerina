@@ -1,7 +1,8 @@
+import 'dart:async';
+
 import 'package:cinerina/feature/initialization/widget/depend_scope.dart';
 import 'package:cinerina/feature/search/bloc/search_bloc.dart';
 import 'package:cinerina/feature/search/data/i_search_repository.dart';
-import 'package:cinerina/feature/search/data/search_repository.dart';
 import 'package:cinerina/feature/search/widget/search_screen.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -24,7 +25,7 @@ class _AppMaterialState extends State<AppMaterial> {
       listen: false,
     ).dependModel.themeController;
     return BlocProvider(
-      create: (context) => SearchBloc(searchRepository: ISearchRepository(dio: Dio()))..add(SearchMovie(query: 'нигер')),
+      create: (context) => SearchBloc(searchRepository: ISearchRepository(dio: Dio()))..add(SearchMovie(query: 'нигер',)),
       child: ListenableBuilder(
         listenable: themeController,
         builder: (context, child) {

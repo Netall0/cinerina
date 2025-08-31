@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cinerina/core/bloc/bloc_transformer.dart';
 import 'package:cinerina/feature/search/data/i_search_repository.dart';
 import 'package:cinerina/feature/search/model/search_model.dart';
@@ -22,16 +24,27 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
     );
   }
 
-  Future<void> _searchMovies(
+Future<void> _searchMovies(
     SearchMovie event,
     Emitter<SearchState> emit,
   ) async {
-    emit(SearchLoading());
     try {
+      emit(SearchLoading());
+
+      (event.query.length <= 2) ? emit(SearchEmpty(query: event.query)) : null;
+
       final result = await _searchRepository.searchMovies(event.query);
-      emit(SearchLoaded(searchList: result ));
-    } catch (e) {
+      final docs = result.docs;
+
+      emit(
+        docs?.isNotEmpty ?? true
+            ? SearchLoaded(searchList: result)
+            : SearchEmpty(query: event.query),
+      );
+    }on Object catch (e) {
       emit(SearchError(e.toString()));
+    } finally {
+      event.completer?.complete();
     }
   }
 }
