@@ -15,16 +15,15 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
   SearchBloc({required ISearchRepository searchRepository})
     : _searchRepository = searchRepository,
       super(SearchInitial()) {
-
     on<SearchEvent>(
-      (event, emit) => switch(event){
+      (event, emit) => switch (event) {
         SearchMovie() => _searchMovies(event, emit),
-      },transformer: BlocTransformer.sequential(),
-  
+      },
+      transformer: BlocTransformer.sequential(),
     );
   }
 
-Future<void> _searchMovies(
+  Future<void> _searchMovies(
     SearchMovie event,
     Emitter<SearchState> emit,
   ) async {
@@ -41,7 +40,7 @@ Future<void> _searchMovies(
             ? SearchLoaded(searchList: result)
             : SearchEmpty(query: event.query),
       );
-    }on Object catch (e) {
+    } on Object catch (e) {
       emit(SearchError(e.toString()));
     } finally {
       event.completer?.complete();
