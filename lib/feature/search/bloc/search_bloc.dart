@@ -30,7 +30,7 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
     try {
       emit(SearchLoading());
 
-      (event.query.length <= 2) ? emit(SearchEmpty(query: event.query)) : null;
+     (event.query.length <= 2) ? emit(SearchEmpty(query: event.query)) : null;
 
       final result = await _searchRepository.searchMovies(event.query);
       final docs = result.docs;

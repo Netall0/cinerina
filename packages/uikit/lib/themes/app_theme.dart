@@ -204,7 +204,7 @@ static const light = AppTheme(
       fontSize: AppTypography.h6,
       fontWeight: FontWeight.w500,
       height: AppTypography.lineHeightNormal,
-      color: ThemeConstants.gray600, // Средне-серый
+      color: ThemeConstants.textPrimaryLight, // Средне-серый
     ),
     bodyLarge: TextStyle(
       fontSize: AppTypography.bodyLarge,
