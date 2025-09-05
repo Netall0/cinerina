@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cinerina/core/util/logger.dart';
 import 'package:cinerina/feature/initialization/widget/depend_scope.dart';
@@ -21,17 +20,19 @@ class SearchScreen extends StatefulWidget {
 }
 
 class _SearchScreenState extends State<SearchScreen> with LoggerMixin {
+
+
   @override
   Widget build(BuildContext context) {
     final themeController = DependScope.of(context).dependModel.themeController;
     final theme = Theme.of(context).extension<AppTheme>()!;
     final layout = LayoutInherited.of(context);
     final textController = TextEditingController();
-
+    final bloc = DependScope.of(context).dependModel.searchBloc;
     return Scaffold(
       backgroundColor: theme.background,
       body: RefreshIndicator(
-        onRefresh: () async => context.read<SearchBloc>().add(
+        onRefresh: () async => bloc.add(
           SearchMovie(query: textController.text, completer: Completer()),
         ),
         child: CustomScrollView(
@@ -128,9 +129,7 @@ class _SearchScreenState extends State<SearchScreen> with LoggerMixin {
                       labelStyle: theme.h2,
                       prefixIcon: IconButton(
                         icon: Icon(Icons.search),
-                        onPressed: () => context.read<SearchBloc>().add(
-                          SearchMovie(query: textController.text),
-                        ),
+                        onPressed: () => bloc..add(SearchMovie(query: textController.text))
                       ),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(
@@ -143,6 +142,7 @@ class _SearchScreenState extends State<SearchScreen> with LoggerMixin {
               ),
             ),
             BlocBuilder<SearchBloc, SearchState>(
+              bloc: bloc,
               builder: (context, state) {
                 return switch (state) {
                   SearchEmpty() => SliverToBoxAdapter(
@@ -192,8 +192,8 @@ class _SearchScreenState extends State<SearchScreen> with LoggerMixin {
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(
-                                          builder: (context) {return
-                                            _MovieDetailScreen(
+                                          builder: (context) {
+                                            return _MovieDetailScreen(
                                               movie:
                                                   state.searchList.docs?[index],
                                               heroTag: '$index',
@@ -427,7 +427,6 @@ class _SearchScreenState extends State<SearchScreen> with LoggerMixin {
                                               topRight: Radius.circular(
                                                 theme.borderRadiusMedium,
                                               ),
-                                              
                                             ),
                                             child: CachedNetworkImage(
                                               width: double.infinity,
@@ -656,9 +655,7 @@ class _MovieDetailScreen extends StatelessWidget {
               child: DecoratedBox(
                 decoration: BoxDecoration(
                   color: theme.background,
-                  borderRadius:  BorderRadius.circular(
-                   AppSizes.radiusLarge
-                  ),
+                  borderRadius: BorderRadius.circular(AppSizes.radiusLarge),
                 ),
                 child: Padding(
                   padding: const EdgeInsets.fromLTRB(20, 24, 20, 20),
