@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:cinerina/core/bloc/bloc_transformer.dart';
+import 'package:cinerina/feature/search/data/i_search_history_repository.dart';
 import 'package:cinerina/feature/search/data/i_search_repository.dart';
 import 'package:cinerina/feature/search/model/search_model.dart';
 import 'package:flutter/cupertino.dart';
@@ -11,10 +12,14 @@ part 'search_state.dart';
 
 class SearchBloc extends Bloc<SearchEvent, SearchState> {
   final ISearchRepository _searchRepository;
+  final ISearchHistoryRepository _searchHistoryRepository;
 
-  SearchBloc({required ISearchRepository searchRepository})
-    : _searchRepository = searchRepository,
-      super(SearchInitial()) {
+  SearchBloc({
+    required ISearchRepository searchRepository,
+    required ISearchHistoryRepository searchHistoryRepository,
+  }) : _searchRepository = searchRepository,
+  _searchHistoryRepository = searchHistoryRepository,
+       super(SearchInitial()) {
     on<SearchEvent>(
       (event, emit) => switch (event) {
         SearchMovie() => _searchMovies(event, emit),
@@ -29,8 +34,8 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
   ) async {
     try {
       emit(SearchLoading());
-
-     (event.query.length <= 2) ? emit(SearchEmpty(query: event.query)) : null;
+      _searchHistoryRepository.addSearchHistory(event.query);
+      (event.query.length <= 2) ? emit(SearchEmpty(query: event.query)) : null;
 
       final result = await _searchRepository.searchMovies(event.query);
       final docs = result.docs;

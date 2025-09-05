@@ -1,6 +1,7 @@
 import 'package:cinerina/core/util/logger.dart';
 import 'package:cinerina/feature/initialization/model/depend_container.dart';
 import 'package:cinerina/feature/search/bloc/search_bloc.dart';
+import 'package:cinerina/feature/search/data/i_search_history_repository.dart';
 import 'package:cinerina/feature/search/data/i_search_repository.dart';
 import 'package:cinerina/feature/settings/controller/settings_controller.dart';
 import 'package:cinerina/feature/settings/data/i_settings_repository.dart';
@@ -12,7 +13,6 @@ import 'package:uikit/utils/layout_type_enum.dart';
 final class CompositionRoot with LoggerMixin {
   Future<InheritedResult> compose() async {
     final Stopwatch stopwatch = Stopwatch()..start();
-
 
     logInfo('App run time: ${stopwatch.elapsed}');
 
@@ -33,13 +33,18 @@ final class CompositionRoot with LoggerMixin {
     final sharedPreferences = await _initSharedPreferences();
     final dio = _initDio();
 
-    final settingsRepository = _initSettingsRepository(
-      sharedPreferences
-    );
+    final settingsRepository = _initSettingsRepository(sharedPreferences);
     final searchRepository = _initSearchRepository(dio);
 
+    final searchHistoryRepository = _initSearchHistoryRepository(
+      sharedPreferences,
+    );
+
     final themeController = _initSettingsController(settingsRepository);
-    final searchBloc = _initSearchBloc(searchRepository);
+    final searchBloc = _initSearchBloc(
+      searchRepository,
+      searchHistoryRepository,
+    );
 
     return DependContainer(
       searchBloc: searchBloc,
@@ -47,6 +52,15 @@ final class CompositionRoot with LoggerMixin {
       dio: dio,
       themeController: themeController,
     );
+  }
+
+  ISearchHistoryRepository _initSearchHistoryRepository(
+    SharedPreferences sharedPreferences,
+  ) {
+    logDebug('Создание SearchHistoryRepository...');
+    final repo = ISearchHistoryRepository(sharedPreferences: sharedPreferences);
+    logDebug('SearchHistoryRepository создан');
+    return repo;
   }
 
   /// SharedPreferences
@@ -98,9 +112,15 @@ final class CompositionRoot with LoggerMixin {
   }
 
   /// Блок поиска
-  SearchBloc _initSearchBloc(ISearchRepository repository,) {
+  SearchBloc _initSearchBloc(
+    ISearchRepository searchrepository,
+    ISearchHistoryRepository searchHistoryRepository,
+  ) {
     logDebug('Создание SearchBloc...');
-    final bloc = SearchBloc(searchRepository: repository);
+    final bloc = SearchBloc(
+      searchRepository: searchrepository,
+      searchHistoryRepository: searchHistoryRepository,
+    );
     logDebug('SearchBloc создан');
     return bloc;
   }

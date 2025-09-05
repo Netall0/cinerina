@@ -1,11 +1,14 @@
 import 'dart:async';
 import 'dart:ui';
+import 'package:cinerina/core/bloc/bloc_observer.dart';
+import 'package:cinerina/core/bloc/bloc_transformer.dart';
 import 'package:cinerina/core/config/app_config.dart';
 import 'package:cinerina/core/util/logger.dart';
 import 'package:cinerina/feature/app/widget/app_scope.dart';
 import 'package:cinerina/feature/initialization/logic/composition_root.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 final class AppRunner with LoggerMixin {
   Future<void> runner(AppEnvironment environment) async {
@@ -13,11 +16,12 @@ final class AppRunner with LoggerMixin {
       final binding = WidgetsFlutterBinding.ensureInitialized()
         ..deferFirstFrame();
 
-
-
       await SystemChrome.setPreferredOrientations([
         DeviceOrientation.portraitUp,
       ]);
+
+      Bloc.observer = AppBlocObserver();
+      Bloc.transformer = BlocTransformer.sequential();
 
       PlatformDispatcher.instance.onError = (error, stack) {
         return true;
