@@ -1,0 +1,108 @@
+import 'package:cinerina/core/router/Favorites_screen.dart';
+import 'package:cinerina/core/router/profile_screen.dart';
+import 'package:cinerina/feature/app/widget/app_shell.dart';
+import 'package:cinerina/feature/search/model/search_model.dart';
+import 'package:cinerina/feature/search/widget/search_screen.dart';
+import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+
+part 'router.g.dart';
+
+@TypedStatefulShellRoute<AppShellRouteData>(
+  branches: <TypedStatefulShellBranch<StatefulShellBranchData>>[
+    TypedStatefulShellBranch<SearchShellBranchData>(
+      routes: [
+        TypedGoRoute<SearchRouteData>(
+          path: '/',
+          routes: [
+            TypedGoRoute<SearchDetailedRouteData>(
+              path: '/detailed/:name', 
+            ),
+          ],
+        ),
+      ],
+    ),
+    TypedStatefulShellBranch<FavoritesShellBranchData>(
+      routes: [TypedGoRoute<FavoritesRouteData>(path: '/favorites')],
+    ),
+    TypedStatefulShellBranch<ProfileShellBranchData>(
+      routes: [TypedGoRoute<ProfileRouteData>(path: '/profile')],
+    ),
+  ],
+)
+class AppShellRouteData extends StatefulShellRouteData {
+  @override
+  Widget builder(
+    BuildContext context,
+    GoRouterState state,
+    StatefulNavigationShell navigationShell,
+  ) {
+    return AppShell(statefulNavigationShell: navigationShell);
+  }
+}
+
+class SearchShellBranchData extends StatefulShellBranchData {
+  const SearchShellBranchData();
+}
+
+class ProfileShellBranchData extends StatefulShellBranchData {
+  const ProfileShellBranchData();
+}
+
+class FavoritesShellBranchData extends StatefulShellBranchData {
+  const FavoritesShellBranchData();
+}
+
+class SearchRouteData extends GoRouteData with $SearchRouteData {
+  const SearchRouteData();
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) {
+    return const SearchScreen();
+  }
+}
+
+
+class SearchDetailedRouteData extends GoRouteData
+    with $SearchDetailedRouteData {
+  final String name; 
+  final String? heroTag; 
+  final String? imageUrl; 
+  final String? description;
+
+  const SearchDetailedRouteData({
+    required this.name, 
+    this.heroTag, 
+    this.imageUrl,
+    this.description,
+  });
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) {
+    return SearchDetailedScreen(
+      heroTag: heroTag ?? 'default',
+      name: name,
+      imageUrl: imageUrl ?? '',
+      description: description ?? '',
+      movie: state.extra as Doc?, 
+    );
+  }
+}
+
+class FavoritesRouteData extends GoRouteData with $FavoritesRouteData {
+  const FavoritesRouteData();
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) {
+    return const FavoritesScreen();
+  }
+}
+
+class ProfileRouteData extends GoRouteData with $ProfileRouteData {
+  const ProfileRouteData();
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) {
+    return const ProfileScreen();
+  }
+}
