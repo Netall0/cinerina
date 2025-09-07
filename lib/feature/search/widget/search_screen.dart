@@ -1,11 +1,13 @@
 import 'dart:async';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cinerina/core/router/router.dart';
 import 'package:cinerina/core/util/logger.dart';
 import 'package:cinerina/feature/initialization/widget/depend_scope.dart';
 import 'package:cinerina/feature/search/bloc/search_bloc.dart';
 import 'package:cinerina/feature/search/model/search_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:uikit/color/colors.dart';
 import 'package:uikit/layout/app_size.dart';
 import 'package:uikit/layout/windows_scope.dart';
@@ -20,8 +22,6 @@ class SearchScreen extends StatefulWidget {
 }
 
 class _SearchScreenState extends State<SearchScreen> with LoggerMixin {
-
-
   @override
   Widget build(BuildContext context) {
     final themeController = DependScope.of(context).dependModel.themeController;
@@ -129,7 +129,8 @@ class _SearchScreenState extends State<SearchScreen> with LoggerMixin {
                       labelStyle: theme.h2,
                       prefixIcon: IconButton(
                         icon: Icon(Icons.search),
-                        onPressed: () => bloc..add(SearchMovie(query: textController.text))
+                        onPressed: () =>
+                            bloc..add(SearchMovie(query: textController.text)),
                       ),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(
@@ -189,53 +190,49 @@ class _SearchScreenState extends State<SearchScreen> with LoggerMixin {
                                   ),
                                   child: InkWell(
                                     onTap: () {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) {
-                                            return _MovieDetailScreen(
-                                              movie:
-                                                  state.searchList.docs?[index],
-                                              heroTag: '$index',
-                                              imageUrl:
+                                     final routeData =  SearchDetailedRouteData(
+                                        
+                                        name: state
+                                                .searchList
+                                                .docs?[index]
+                                                .name
+                                                .orIfEmpty(
                                                   state
-                                                      .searchList
-                                                      .docs?[index]
-                                                      .poster
-                                                      ?.previewUrl
-                                                      .orIfEmpty(
-                                                        state
-                                                                .searchList
-                                                                .docs?[index]
-                                                                .poster
-                                                                ?.url ??
-                                                            '',
-                                                      ) ??
-                                                  '',
-                                              description:
+                                                          .searchList
+                                                          .docs?[index]
+                                                          .alternativeName ??
+                                                      '',
+                                                ) ??
+                                            '',
+                                        heroTag: state
+                                                .searchList
+                                                .docs?[index]
+                                                .id
+                                                ?.toString()
+                                                .orIfEmpty('movie-$index') ??
+                                            'movie-$index',
+                                        imageUrl:
+                                            state
+                                                .searchList
+                                                .docs?[index]
+                                                .poster
+                                                ?.previewUrl
+                                                .orIfEmpty(
                                                   state
-                                                      .searchList
-                                                      .docs?[index]
-                                                      .description ??
-                                                  '',
-
-                                              name:
-                                                  state
-                                                      .searchList
-                                                      .docs?[index]
-                                                      .name
-                                                      .orIfEmpty(
-                                                        state
-                                                                .searchList
-                                                                .docs?[index]
-                                                                .alternativeName ??
-                                                            '',
-                                                      ) ??
-                                                  '',
-                                            );
-                                          },
-                                        ),
+                                                          .searchList
+                                                          .docs?[index]
+                                                          .poster
+                                                          ?.url ??
+                                                      '',
+                                                ) ??
+                                            '',
+                                        description: state
+                                                .searchList
+                                                .docs?[index]
+                                                .description ??
+                                            '',
                                       );
+                                      context.go(routeData.location,extra: state.searchList.docs?[index]);
                                     },
                                     child: Row(
                                       children: [
@@ -364,7 +361,7 @@ class _SearchScreenState extends State<SearchScreen> with LoggerMixin {
                                     context,
                                     MaterialPageRoute(
                                       builder: (context) {
-                                        return _MovieDetailScreen(
+                                        return SearchDetailedScreen(
                                           movie: state.searchList.docs?[index],
                                           heroTag: '$index',
                                           imageUrl:
@@ -561,8 +558,8 @@ class _SearchScreenState extends State<SearchScreen> with LoggerMixin {
   }
 }
 
-class _MovieDetailScreen extends StatelessWidget {
-  const _MovieDetailScreen({
+class SearchDetailedScreen extends StatelessWidget {
+  const SearchDetailedScreen({
     required this.heroTag,
     required this.movie,
     required this.name,

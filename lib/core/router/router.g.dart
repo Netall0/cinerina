@@ -1,0 +1,148 @@
+// GENERATED CODE - DO NOT MODIFY BY HAND
+
+part of 'router.dart';
+
+// **************************************************************************
+// GoRouterGenerator
+// **************************************************************************
+
+List<RouteBase> get $appRoutes => [$appShellRouteData];
+
+RouteBase get $appShellRouteData => StatefulShellRouteData.$route(
+  factory: $AppShellRouteDataExtension._fromState,
+  branches: [
+    StatefulShellBranchData.$branch(
+      routes: [
+        GoRouteData.$route(
+          path: '/',
+          factory: $SearchRouteData._fromState,
+          routes: [
+            GoRouteData.$route(
+              path: '/detailed/:name',
+              factory: $SearchDetailedRouteData._fromState,
+            ),
+          ],
+        ),
+      ],
+    ),
+    StatefulShellBranchData.$branch(
+      routes: [
+        GoRouteData.$route(
+          path: '/favorites',
+          factory: $FavoritesRouteData._fromState,
+        ),
+      ],
+    ),
+    StatefulShellBranchData.$branch(
+      routes: [
+        GoRouteData.$route(
+          path: '/profile',
+          factory: $ProfileRouteData._fromState,
+        ),
+      ],
+    ),
+  ],
+);
+
+extension $AppShellRouteDataExtension on AppShellRouteData {
+  static AppShellRouteData _fromState(GoRouterState state) =>
+      AppShellRouteData();
+}
+
+mixin $SearchRouteData on GoRouteData {
+  static SearchRouteData _fromState(GoRouterState state) =>
+      const SearchRouteData();
+
+  @override
+  String get location => GoRouteData.$location('/');
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}
+
+mixin $SearchDetailedRouteData on GoRouteData {
+  static SearchDetailedRouteData _fromState(GoRouterState state) =>
+      SearchDetailedRouteData(
+        name: state.pathParameters['name']!,
+        heroTag: state.uri.queryParameters['hero-tag'],
+        imageUrl: state.uri.queryParameters['image-url'],
+        description: state.uri.queryParameters['description'],
+      );
+
+  SearchDetailedRouteData get _self => this as SearchDetailedRouteData;
+
+  @override
+  String get location => GoRouteData.$location(
+    '/detailed/${Uri.encodeComponent(_self.name)}',
+    queryParams: {
+      if (_self.heroTag != null) 'hero-tag': _self.heroTag,
+      if (_self.imageUrl != null) 'image-url': _self.imageUrl,
+      if (_self.description != null) 'description': _self.description,
+    },
+  );
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}
+
+mixin $FavoritesRouteData on GoRouteData {
+  static FavoritesRouteData _fromState(GoRouterState state) =>
+      const FavoritesRouteData();
+
+  @override
+  String get location => GoRouteData.$location('/favorites');
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}
+
+mixin $ProfileRouteData on GoRouteData {
+  static ProfileRouteData _fromState(GoRouterState state) =>
+      const ProfileRouteData();
+
+  @override
+  String get location => GoRouteData.$location('/profile');
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}

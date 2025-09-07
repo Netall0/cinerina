@@ -1,7 +1,9 @@
+import 'package:cinerina/core/router/router.dart';
 import 'package:cinerina/feature/initialization/widget/depend_scope.dart';
 import 'package:cinerina/feature/search/bloc/search_bloc.dart';
 import 'package:cinerina/feature/search/widget/search_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:uikit/themes/app_theme.dart';
 
 class AppMaterial extends StatefulWidget {
@@ -14,7 +16,7 @@ class AppMaterial extends StatefulWidget {
 class _AppMaterialState extends State<AppMaterial> {
   @override
   void didChangeDependencies() {
-    DependScope.of(context,).dependModel.searchBloc.add(SearchMovie(query: ''));
+    DependScope.of(context).dependModel.searchBloc.add(SearchMovie(query: ''));
     super.didChangeDependencies();
   }
 
@@ -23,6 +25,8 @@ class _AppMaterialState extends State<AppMaterial> {
     DependScope.of(context).dependModel.searchBloc.close();
     super.dispose();
   }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -34,11 +38,16 @@ class _AppMaterialState extends State<AppMaterial> {
     return ListenableBuilder(
       listenable: themeController,
       builder: (context, child) {
-        return MaterialApp(
+        return MaterialApp.router(
+          routerConfig: GoRouter(
+            initialLocation: '/',
+            routes: $appRoutes,
+            debugLogDiagnostics: true,
+            
+          ),
           theme: ThemeData(useMaterial3: true, extensions: [AppTheme.light]),
           darkTheme: ThemeData(useMaterial3: true, extensions: [AppTheme.dark]),
           themeMode: themeController.isDark ? ThemeMode.dark : ThemeMode.light,
-          home: SearchScreen(),
         );
       },
     );
