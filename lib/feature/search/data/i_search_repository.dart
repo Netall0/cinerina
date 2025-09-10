@@ -21,7 +21,6 @@ final class ISearchRepository with LoggerMixin implements SearchRepository {
 
       return SearchModel.fromJson(response.data);
     } on Object catch (e) {
-      // Специфичная обработка ошибок Dio
       logError('Произошла ошибка при поиске "$query": ${e.toString()}');
       return SearchModel();
     }

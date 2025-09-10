@@ -1,10 +1,14 @@
 import 'dart:async';
+
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cinerina/core/extension/string_extension.dart';
 import 'package:cinerina/core/router/router.dart';
 import 'package:cinerina/core/util/logger.dart';
+import 'package:cinerina/feature/history/bloc/history_bloc.dart';
 import 'package:cinerina/feature/initialization/widget/depend_scope.dart';
 import 'package:cinerina/feature/search/bloc/search_bloc.dart';
 import 'package:cinerina/feature/search/model/search_model.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -12,7 +16,6 @@ import 'package:uikit/color/colors.dart';
 import 'package:uikit/layout/app_size.dart';
 import 'package:uikit/layout/windows_scope.dart';
 import 'package:uikit/themes/app_theme.dart';
-import 'package:cinerina/core/extension/string_extension.dart';
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key});
@@ -22,19 +25,54 @@ class SearchScreen extends StatefulWidget {
 }
 
 class _SearchScreenState extends State<SearchScreen> with LoggerMixin {
+  late TextEditingController textController;
+  Timer? _debounceTimer;
+
+  @override
+  void initState() {
+    super.initState();
+    textController = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    textController.dispose();
+    _debounceTimer?.cancel();
+    super.dispose();
+  }
+
+  void _onSearchChanged(String value) {
+    _debounceTimer?.cancel();
+    _debounceTimer = Timer(Duration(milliseconds: 300), () {
+      if (value.trim().isNotEmpty) {
+        final bloc = DependScope.of(
+          context,
+          listen: false,
+        ).dependModel.searchBloc;
+        bloc.add(SearchMovie(query: value.trim()));
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final themeController = DependScope.of(context).dependModel.themeController;
     final theme = Theme.of(context).extension<AppTheme>()!;
     final layout = LayoutInherited.of(context);
-    final textController = TextEditingController();
     final bloc = DependScope.of(context).dependModel.searchBloc;
+    final historyBloc = DependScope.of(
+      context,
+      listen: true,
+    ).dependModel.historyBloc;
+
     return Scaffold(
       backgroundColor: theme.background,
       body: RefreshIndicator(
-        onRefresh: () async => bloc.add(
-          SearchMovie(query: textController.text, completer: Completer()),
-        ),
+        onRefresh: () async {
+          if (textController.text.trim().isNotEmpty) {
+            bloc.add(SearchMovie(query: textController.text.trim()));
+          }
+        },
         child: CustomScrollView(
           slivers: [
             SliverAppBar(
@@ -44,11 +82,9 @@ class _SearchScreenState extends State<SearchScreen> with LoggerMixin {
               expandedHeight: AppSizes.screenHeight(context) * 0.2,
               collapsedHeight: AppSizes.screenHeight(context) * 0.12,
               backgroundColor: theme.surface,
-
               title: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  // Theme switch
                   Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
@@ -67,17 +103,11 @@ class _SearchScreenState extends State<SearchScreen> with LoggerMixin {
                           activeColor: theme.primary,
                           materialTapTargetSize:
                               MaterialTapTargetSize.shrinkWrap,
-                          onChanged: (value) {
-                            logInfo(
-                              '🌙 Theme toggle: ${themeController.isDark} -> switching',
-                            );
-                            themeController.toggleTheme();
-                          },
+                          onChanged: (value) => themeController.toggleTheme(),
                         ),
                       ),
                     ],
                   ),
-                  // Layout switch
                   Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
@@ -96,22 +126,13 @@ class _SearchScreenState extends State<SearchScreen> with LoggerMixin {
                           activeColor: theme.secondary,
                           materialTapTargetSize:
                               MaterialTapTargetSize.shrinkWrap,
-                          onChanged: (value) {
-                            logInfo(
-                              '🎛️ Layout toggle: ${themeController.isList} -> switching',
-                            );
-                            logInfo(
-                              '📋 layoutType: ${themeController.layoutType}',
-                            );
-                            themeController.toggleLayout();
-                          },
+                          onChanged: (value) => themeController.toggleLayout(),
                         ),
                       ),
                     ],
                   ),
                 ],
               ),
-
               flexibleSpace: FlexibleSpaceBar(
                 background: Padding(
                   padding: EdgeInsets.only(
@@ -121,7 +142,7 @@ class _SearchScreenState extends State<SearchScreen> with LoggerMixin {
                     bottom: 16,
                   ),
                   child: TextField(
-                    onChanged: (value) => textController.text = value,
+                    controller: textController,
                     decoration: InputDecoration(
                       fillColor: theme.background,
                       filled: true,
@@ -130,7 +151,7 @@ class _SearchScreenState extends State<SearchScreen> with LoggerMixin {
                       prefixIcon: IconButton(
                         icon: Icon(Icons.search),
                         onPressed: () =>
-                            bloc..add(SearchMovie(query: textController.text)),
+                            bloc.add(SearchMovie(query: textController.text)),
                       ),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(
@@ -142,8 +163,53 @@ class _SearchScreenState extends State<SearchScreen> with LoggerMixin {
                 ),
               ),
             ),
-            BlocBuilder<SearchBloc, SearchState>(
+
+            BlocBuilder<HistoryBloc, HistoryState>(
+              bloc: historyBloc,
+              builder: (context, state) {
+                if (textController.text.isNotEmpty || state is! HistoryLoaded)
+                  return SliverToBoxAdapter(child: SizedBox.shrink());
+
+                return switch (state) {
+                  HistoryLoaded() => SliverList.builder(
+                    itemCount: state.historyList.length,
+                    itemBuilder: (context, index) {
+                      final query = state.historyList[index];
+                      return ListTile(
+                        title: Text(
+                          query,
+                          style: theme.bodyMedium,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        trailing: IconButton(
+                          icon: Icon(Icons.close, size: 18),
+                          onPressed: () =>
+                              historyBloc.add(DeleteHistory(query: query)),
+                        ),
+                        onTap: () {
+                          textController.text = query;
+                          bloc.add(SearchMovie(query: query));
+                        },
+                      );
+                    },
+                  ),
+                };
+              },
+            ),
+
+            BlocConsumer<SearchBloc, SearchState>(
               bloc: bloc,
+              listener: (context, state) {
+                if (state is SearchLoaded) {
+                  historyBloc.add(
+                    AddHistory(query: 'алах $state'
+                      
+                    ),
+                  );
+                }
+              },
+
               builder: (context, state) {
                 return switch (state) {
                   SearchEmpty() => SliverToBoxAdapter(
@@ -182,73 +248,242 @@ class _SearchScreenState extends State<SearchScreen> with LoggerMixin {
                     themeController.isList
                         ? SliverPadding(
                             padding: layout.padding,
-                            sliver: SliverList(
-                              delegate: SliverChildBuilderDelegate(
-                                (context, index) => Padding(
-                                  padding: EdgeInsets.only(
-                                    bottom: layout.spacing,
+                            sliver: SliverList.builder(
+                              itemCount: state.searchList.docs?.length ?? 0,
+                              itemBuilder: (context, index) => Padding(
+                                padding: EdgeInsets.only(
+                                  bottom: layout.spacing,
+                                ),
+                                child: InkWell(
+                                  onTap: () {
+                                    final routeData = SearchDetailedRouteData(
+                                      name:
+                                          state.searchList.docs?[index].name
+                                              .orIfEmpty(
+                                                state
+                                                        .searchList
+                                                        .docs?[index]
+                                                        .alternativeName ??
+                                                    '',
+                                              ) ??
+                                          '',
+                                      heroTag:
+                                          state.searchList.docs?[index].id
+                                              ?.toString()
+                                              .orIfEmpty('movie-$index') ??
+                                          'movie-$index',
+                                      imageUrl:
+                                          state
+                                              .searchList
+                                              .docs?[index]
+                                              .poster
+                                              ?.previewUrl
+                                              .orIfEmpty(
+                                                state
+                                                        .searchList
+                                                        .docs?[index]
+                                                        .poster
+                                                        ?.url ??
+                                                    '',
+                                              ) ??
+                                          '',
+                                      description:
+                                          state
+                                              .searchList
+                                              .docs?[index]
+                                              .description ??
+                                          '',
+                                    );
+                                    context.go(
+                                      routeData.location,
+                                      extra: state.searchList.docs?[index],
+                                    );
+                                  },
+                                  child: Row(
+                                    children: [
+                                      ClipRRect(
+                                        borderRadius: BorderRadius.circular(
+                                          theme.borderRadiusSmall,
+                                        ),
+                                        child: CachedNetworkImage(
+                                          progressIndicatorBuilder:
+                                              (
+                                                context,
+                                                url,
+                                                downloadProgress,
+                                              ) => SizedBox(
+                                                width: 80,
+                                                height: 120,
+                                                child: ColoredBox(
+                                                  color: theme.surface,
+                                                  child: Center(
+                                                    child: CircularProgressIndicator(
+                                                      value: downloadProgress
+                                                          .progress,
+                                                      valueColor:
+                                                          AlwaysStoppedAnimation(
+                                                            theme.primary,
+                                                          ),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                          errorWidget: (context, url, error) =>
+                                              SizedBox(
+                                                width: 80,
+                                                height: 120,
+                                                child: ColoredBox(
+                                                  color: theme.surface,
+                                                  child: Icon(
+                                                    Icons.image_not_supported,
+                                                    color: theme.textSecondary,
+                                                    size: 24,
+                                                  ),
+                                                ),
+                                              ),
+                                          height: 120,
+                                          width: 80,
+                                          fit: BoxFit.cover,
+                                          imageUrl:
+                                              state
+                                                  .searchList
+                                                  .docs?[index]
+                                                  .poster
+                                                  ?.previewUrl
+                                                  .orIfEmpty(
+                                                    state
+                                                            .searchList
+                                                            .docs?[index]
+                                                            .poster
+                                                            ?.url ??
+                                                        '',
+                                                  ) ??
+                                              'https://www.svgrepo.com/svg/508699/landscape-placeholder',
+                                        ),
+                                      ),
+                                      const SizedBox(width: AppSizes.spacing12),
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              state.searchList.docs?[index].name
+                                                      .orIfEmpty(
+                                                        state
+                                                                .searchList
+                                                                .docs?[index]
+                                                                .alternativeName ??
+                                                            '',
+                                                      ) ??
+                                                  '',
+                                              style: theme.h4,
+                                              maxLines: 2,
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                            const SizedBox(
+                                              height: AppSizes.spacing4,
+                                            ),
+                                            Text(
+                                              state
+                                                      .searchList
+                                                      .docs?[index]
+                                                      .description ??
+                                                  '',
+                                              style: theme.bodySmall.copyWith(
+                                                color: theme.textSecondary,
+                                              ),
+                                              maxLines: 3,
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                  child: InkWell(
-                                    onTap: () {
-                                     final routeData =  SearchDetailedRouteData(
-                                        
-                                        name: state
-                                                .searchList
-                                                .docs?[index]
-                                                .name
-                                                .orIfEmpty(
-                                                  state
-                                                          .searchList
-                                                          .docs?[index]
-                                                          .alternativeName ??
-                                                      '',
-                                                ) ??
-                                            '',
-                                        heroTag: state
-                                                .searchList
-                                                .docs?[index]
-                                                .id
-                                                ?.toString()
-                                                .orIfEmpty('movie-$index') ??
-                                            'movie-$index',
-                                        imageUrl:
-                                            state
-                                                .searchList
-                                                .docs?[index]
-                                                .poster
-                                                ?.previewUrl
-                                                .orIfEmpty(
-                                                  state
-                                                          .searchList
-                                                          .docs?[index]
-                                                          .poster
-                                                          ?.url ??
-                                                      '',
-                                                ) ??
-                                            '',
-                                        description: state
-                                                .searchList
-                                                .docs?[index]
-                                                .description ??
-                                            '',
-                                      );
-                                      context.go(routeData.location,extra: state.searchList.docs?[index]);
-                                    },
-                                    child: Row(
-                                      children: [
-                                        ClipRRect(
-                                          borderRadius: BorderRadius.circular(
-                                            theme.borderRadiusSmall,
+                                ),
+                              ),
+                            ),
+                          )
+                        : SliverPadding(
+                            padding: layout.padding,
+                            sliver: SliverGrid.builder(
+                              itemCount: state.searchList.docs?.length ?? 0,
+                              itemBuilder: (context, index) => InkWell(
+                                onTap: () => Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => SearchDetailedScreen(
+                                      movie: state.searchList.docs?[index],
+                                      heroTag: '$index',
+                                      imageUrl:
+                                          state
+                                              .searchList
+                                              .docs?[index]
+                                              .poster
+                                              ?.previewUrl
+                                              .orIfEmpty(
+                                                state
+                                                        .searchList
+                                                        .docs?[index]
+                                                        .poster
+                                                        ?.url ??
+                                                    '',
+                                              ) ??
+                                          '',
+                                      description:
+                                          state
+                                              .searchList
+                                              .docs?[index]
+                                              .description ??
+                                          '',
+                                      name:
+                                          state.searchList.docs?[index].name
+                                              .orIfEmpty(
+                                                state
+                                                        .searchList
+                                                        .docs?[index]
+                                                        .alternativeName ??
+                                                    '',
+                                              ) ??
+                                          '',
+                                    ),
+                                  ),
+                                ),
+                                child: DecoratedBox(
+                                  decoration: BoxDecoration(
+                                    color: theme.cardBackground,
+                                    borderRadius: BorderRadius.circular(
+                                      theme.borderRadiusMedium,
+                                    ),
+                                    border: Border.all(
+                                      color: theme.dividerColor,
+                                      width: 1,
+                                    ),
+                                    boxShadow: theme.shadowElevation1,
+                                  ),
+                                  child: Column(
+                                    children: [
+                                      Expanded(
+                                        flex: 3,
+                                        child: ClipRRect(
+                                          borderRadius: BorderRadius.only(
+                                            topLeft: Radius.circular(
+                                              theme.borderRadiusLarge,
+                                            ),
+                                            topRight: Radius.circular(
+                                              theme.borderRadiusMedium,
+                                            ),
                                           ),
                                           child: CachedNetworkImage(
+                                            width: double.infinity,
+                                            fit: BoxFit.cover,
                                             progressIndicatorBuilder:
                                                 (
                                                   context,
                                                   url,
                                                   downloadProgress,
                                                 ) => SizedBox(
-                                                  width: 80,
-                                                  height: 120,
                                                   child: ColoredBox(
                                                     color: theme.surface,
                                                     child: Center(
@@ -269,21 +504,16 @@ class _SearchScreenState extends State<SearchScreen> with LoggerMixin {
                                                   url,
                                                   error,
                                                 ) => SizedBox(
-                                                  width: 80,
-                                                  height: 120,
                                                   child: ColoredBox(
                                                     color: theme.surface,
                                                     child: Icon(
                                                       Icons.image_not_supported,
                                                       color:
                                                           theme.textSecondary,
-                                                      size: 24,
+                                                      size: 48,
                                                     ),
                                                   ),
                                                 ),
-                                            height: 120,
-                                            width: 80,
-                                            fit: BoxFit.cover,
                                             imageUrl:
                                                 state
                                                     .searchList
@@ -301,215 +531,31 @@ class _SearchScreenState extends State<SearchScreen> with LoggerMixin {
                                                 'https://www.svgrepo.com/svg/508699/landscape-placeholder',
                                           ),
                                         ),
-                                        const SizedBox(
-                                          width: AppSizes.spacing12,
-                                        ),
-                                        Expanded(
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Text(
-                                                state
-                                                        .searchList
-                                                        .docs?[index]
-                                                        .name
-                                                        .orIfEmpty(
-                                                          state
-                                                                  .searchList
-                                                                  .docs?[index]
-                                                                  .alternativeName ??
-                                                              '',
-                                                        ) ??
-                                                    '',
-                                                style: theme.h4,
-                                                maxLines: 2,
-                                                overflow: TextOverflow.ellipsis,
-                                              ),
-                                              const SizedBox(
-                                                height: AppSizes.spacing4,
-                                              ),
-                                              Text(
-                                                state
-                                                        .searchList
-                                                        .docs?[index]
-                                                        .description ??
-                                                    '',
-                                                style: theme.bodySmall.copyWith(
-                                                  color: theme.textSecondary,
-                                                ),
-                                                maxLines: 3,
-                                                overflow: TextOverflow.ellipsis,
-                                              ),
-                                            ],
+                                      ),
+                                      Expanded(
+                                        flex: 1,
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(8),
+                                          child: Text(
+                                            state.searchList.docs?[index].name
+                                                    .orIfEmpty(
+                                                      state
+                                                              .searchList
+                                                              .docs?[index]
+                                                              .alternativeName ??
+                                                          '',
+                                                    ) ??
+                                                '',
+                                            style: theme.bodyMedium,
+                                            textAlign: TextAlign.center,
+                                            maxLines: 2,
+                                            overflow: TextOverflow.ellipsis,
                                           ),
                                         ),
-                                      ],
-                                    ),
+                                      ),
+                                    ],
                                   ),
                                 ),
-                                childCount: state.searchList.docs?.length ?? 0,
-                              ),
-                            ),
-                          )
-                        : SliverPadding(
-                            padding: layout.padding,
-                            sliver: SliverGrid(
-                              delegate: SliverChildBuilderDelegate(
-                                (context, index) => InkWell(
-                                  onTap: () => Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) {
-                                        return SearchDetailedScreen(
-                                          movie: state.searchList.docs?[index],
-                                          heroTag: '$index',
-                                          imageUrl:
-                                              state
-                                                  .searchList
-                                                  .docs?[index]
-                                                  .poster
-                                                  ?.previewUrl
-                                                  .orIfEmpty(
-                                                    state
-                                                            .searchList
-                                                            .docs?[index]
-                                                            .poster
-                                                            ?.url ??
-                                                        '',
-                                                  ) ??
-                                              '',
-                                          description:
-                                              state
-                                                  .searchList
-                                                  .docs?[index]
-                                                  .description ??
-                                              '',
-
-                                          name:
-                                              state.searchList.docs?[index].name
-                                                  .orIfEmpty(
-                                                    state
-                                                            .searchList
-                                                            .docs?[index]
-                                                            .alternativeName ??
-                                                        '',
-                                                  ) ??
-                                              '',
-                                        );
-                                      },
-                                    ),
-                                  ),
-                                  child: DecoratedBox(
-                                    decoration: BoxDecoration(
-                                      color: theme.cardBackground,
-                                      borderRadius: BorderRadius.circular(
-                                        theme.borderRadiusMedium,
-                                      ),
-                                      border: Border.all(
-                                        color: theme.dividerColor,
-                                        width: 1,
-                                      ),
-                                      boxShadow: theme.shadowElevation1,
-                                    ),
-                                    child: Column(
-                                      children: [
-                                        Expanded(
-                                          flex: 3,
-                                          child: ClipRRect(
-                                            borderRadius: BorderRadius.only(
-                                              topLeft: Radius.circular(
-                                                theme.borderRadiusLarge,
-                                              ),
-                                              topRight: Radius.circular(
-                                                theme.borderRadiusMedium,
-                                              ),
-                                            ),
-                                            child: CachedNetworkImage(
-                                              width: double.infinity,
-                                              fit: BoxFit.cover,
-                                              progressIndicatorBuilder:
-                                                  (
-                                                    context,
-                                                    url,
-                                                    downloadProgress,
-                                                  ) => SizedBox(
-                                                    child: ColoredBox(
-                                                      color: theme.surface,
-                                                      child: Center(
-                                                        child: CircularProgressIndicator(
-                                                          value:
-                                                              downloadProgress
-                                                                  .progress,
-                                                          valueColor:
-                                                              AlwaysStoppedAnimation(
-                                                                theme.primary,
-                                                              ),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ),
-                                              errorWidget:
-                                                  (
-                                                    context,
-                                                    url,
-                                                    error,
-                                                  ) => SizedBox(
-                                                    child: ColoredBox(
-                                                      color: theme.surface,
-                                                      child: Icon(
-                                                        Icons
-                                                            .image_not_supported,
-                                                        color:
-                                                            theme.textSecondary,
-                                                        size: 48,
-                                                      ),
-                                                    ),
-                                                  ),
-                                              imageUrl:
-                                                  state
-                                                      .searchList
-                                                      .docs?[index]
-                                                      .poster
-                                                      ?.previewUrl
-                                                      .orIfEmpty(
-                                                        state
-                                                                .searchList
-                                                                .docs?[index]
-                                                                .poster
-                                                                ?.url ??
-                                                            '',
-                                                      ) ??
-                                                  'https://www.svgrepo.com/svg/508699/landscape-placeholder',
-                                            ),
-                                          ),
-                                        ),
-                                        Expanded(
-                                          flex: 1,
-                                          child: Padding(
-                                            padding: const EdgeInsets.all(8),
-                                            child: Text(
-                                              state.searchList.docs?[index].name
-                                                      .orIfEmpty(
-                                                        state
-                                                                .searchList
-                                                                .docs?[index]
-                                                                .alternativeName ??
-                                                            '',
-                                                      ) ??
-                                                  '',
-                                              style: theme.bodyMedium,
-                                              textAlign: TextAlign.center,
-                                              maxLines: 2,
-                                              overflow: TextOverflow.ellipsis,
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                                childCount: state.searchList.docs?.length ?? 0,
                               ),
                               gridDelegate:
                                   SliverGridDelegateWithFixedCrossAxisCount(

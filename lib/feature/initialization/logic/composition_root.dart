@@ -1,7 +1,8 @@
 import 'package:cinerina/core/util/logger.dart';
+import 'package:cinerina/feature/history/bloc/history_bloc.dart';
 import 'package:cinerina/feature/initialization/model/depend_container.dart';
 import 'package:cinerina/feature/search/bloc/search_bloc.dart';
-import 'package:cinerina/feature/search/data/i_search_history_repository.dart';
+import 'package:cinerina/feature/history/data/i_search_history_repository.dart';
 import 'package:cinerina/feature/search/data/i_search_repository.dart';
 import 'package:cinerina/feature/settings/controller/settings_controller.dart';
 import 'package:cinerina/feature/settings/data/i_settings_repository.dart';
@@ -46,7 +47,12 @@ final class CompositionRoot with LoggerMixin {
       searchHistoryRepository,
     );
 
+    final HistoryBloc historyBloc = _initHistoryBloc(
+      searchHistoryRepository,
+    );
+
     return DependContainer(
+      historyBloc: historyBloc,
       searchBloc: searchBloc,
       sharedPreferences: sharedPreferences,
       dio: dio,
@@ -62,6 +68,7 @@ final class CompositionRoot with LoggerMixin {
     logDebug('SearchHistoryRepository создан');
     return repo;
   }
+
 
   /// SharedPreferences
   Future<SharedPreferences> _initSharedPreferences() async {
@@ -124,4 +131,16 @@ final class CompositionRoot with LoggerMixin {
     logDebug('SearchBloc создан');
     return bloc;
   }
+
+  HistoryBloc _initHistoryBloc(
+    ISearchHistoryRepository searchHistoryRepository,
+  ) {
+    logDebug('Создание HistoryBloc...');
+    final bloc = HistoryBloc(
+      searchHistoryRepository: searchHistoryRepository,
+    );
+    logDebug('HistoryBloc создан');
+    return bloc;
+  }
+
 }

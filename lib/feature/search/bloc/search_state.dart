@@ -34,7 +34,7 @@ final class SearchLoading extends SearchState {
 final class SearchLoaded extends SearchState {
   const SearchLoaded({required this.searchList});
 
-  @override 
+  @override
   final SearchModel searchList;
 
   @override
@@ -44,21 +44,17 @@ final class SearchLoaded extends SearchState {
 
   @override
   int get hashCode => Object.hashAll([searchList]);
-
 }
-
 
 final class SearchEmpty extends SearchState {
   const SearchEmpty({super.searchList, this.query});
 
   final String? query;
 
-
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       other is SearchEmpty && searchList == other.searchList;
-
 
   @override
   int get hashCode => Object.hashAll([searchList]);
@@ -74,9 +70,6 @@ final class SearchError extends SearchState {
       identical(this, other) ||
       other is SearchError && searchList == other.searchList;
 
-
   @override
   int get hashCode => Object.hashAll([searchList]);
-
-
 }

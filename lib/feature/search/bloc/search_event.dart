@@ -9,6 +9,8 @@ sealed class SearchEvent {
   final Completer? completer;
 }
 
+
+
 final class SearchMovie extends SearchEvent {
   const SearchMovie({required this.query, this.completer});
 
