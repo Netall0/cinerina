@@ -1,6 +1,7 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:uikit/themes/app_theme.dart';
 
 class AppShell extends StatelessWidget {
   final StatefulNavigationShell statefulNavigationShell;
@@ -8,9 +9,11 @@ class AppShell extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context).extension<AppTheme>()!;
     return Scaffold(
       body: statefulNavigationShell,
       bottomNavigationBar: BottomNavigationBar(
+        backgroundColor: theme.background,
         currentIndex: statefulNavigationShell.currentIndex,
         items: [
           BottomNavigationBarItem(icon: Icon(Icons.search),label: 'title'),

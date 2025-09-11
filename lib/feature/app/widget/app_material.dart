@@ -1,7 +1,7 @@
 import 'package:cinerina/core/router/router.dart';
+import 'package:cinerina/feature/history/bloc/history_bloc.dart';
 import 'package:cinerina/feature/initialization/widget/depend_scope.dart';
 import 'package:cinerina/feature/search/bloc/search_bloc.dart';
-import 'package:cinerina/feature/search/widget/search_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:uikit/themes/app_theme.dart';
@@ -16,13 +16,15 @@ class AppMaterial extends StatefulWidget {
 class _AppMaterialState extends State<AppMaterial> {
   @override
   void didChangeDependencies() {
-    DependScope.of(context).dependModel.searchBloc.add(SearchMovie(query: ''));
+    DependScope.of(context,listen: false).dependModel.searchBloc.add(SearchMovie(query: ''));
+    DependScope.of(context,listen: false).dependModel.historyBloc.add(LoadHistory(query: ''));
     super.didChangeDependencies();
   }
 
   @override
   void dispose() {
     DependScope.of(context).dependModel.searchBloc.close();
+    DependScope.of(context).dependModel.historyBloc.close();
     super.dispose();
   }
 
