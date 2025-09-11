@@ -12,11 +12,13 @@ part 'search_state.dart';
 
 class SearchBloc extends Bloc<SearchEvent, SearchState> {
   final ISearchRepository _searchRepository;
+  final ISearchHistoryRepository _searchHistoryRepository;
 
   SearchBloc({
     required ISearchRepository searchRepository,
     required ISearchHistoryRepository searchHistoryRepository,
   }) : _searchRepository = searchRepository,
+       _searchHistoryRepository = searchHistoryRepository,
        super(SearchInitial()) {
     on<SearchEvent>(
       (event, emit) => switch (event) {
@@ -25,7 +27,6 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
       transformer: BlocTransformer.sequential(),
     );
   }
-
 
   Future<void> _searchMovies(
     SearchMovie event,
@@ -37,6 +38,8 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
 
       final result = await _searchRepository.searchMovies(event.query);
       final docs = result.docs;
+
+      await _searchHistoryRepository.addSearchHistory(event.query);
 
       emit(
         docs?.isNotEmpty ?? true

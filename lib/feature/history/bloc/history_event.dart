@@ -8,10 +8,8 @@ sealed class HistoryEvent {
 }
 
 final class LoadHistory extends HistoryEvent {
-  const LoadHistory({required this.query});
+  const LoadHistory({super.query});
 
-  @override
-  final String query;
 
   @override
   int get hashCode => Object.hashAll([]);
@@ -24,22 +22,6 @@ final class LoadHistory extends HistoryEvent {
           query == other.query;
 }
 
-final class AddHistory extends HistoryEvent {
-  const AddHistory({required this.query});
-
-  @override
-  final String query;
-
-  @override
-  int get hashCode => Object.hashAll([query]);
-
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is AddHistory &&
-          runtimeType == other.runtimeType &&
-          query == other.query;
-}
 
 final class ResetHistory extends HistoryEvent {
   const ResetHistory();

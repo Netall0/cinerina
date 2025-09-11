@@ -17,7 +17,6 @@ class _AppMaterialState extends State<AppMaterial> {
   @override
   void didChangeDependencies() {
     DependScope.of(context,listen: false).dependModel.searchBloc.add(SearchMovie(query: ''));
-    DependScope.of(context,listen: false).dependModel.historyBloc.add(LoadHistory(query: ''));
     super.didChangeDependencies();
   }
 

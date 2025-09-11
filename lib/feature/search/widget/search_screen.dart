@@ -30,8 +30,16 @@ class _SearchScreenState extends State<SearchScreen> with LoggerMixin {
 
   @override
   void initState() {
-    super.initState();
     textController = TextEditingController();
+  }
+
+  @override
+  void didChangeDependencies() {
+    DependScope.of(
+      context,
+      listen: true,
+    ).dependModel.historyBloc.add(LoadHistory());
+    super.didChangeDependencies();
   }
 
   @override
@@ -39,19 +47,6 @@ class _SearchScreenState extends State<SearchScreen> with LoggerMixin {
     textController.dispose();
     _debounceTimer?.cancel();
     super.dispose();
-  }
-
-  void _onSearchChanged(String value) {
-    _debounceTimer?.cancel();
-    _debounceTimer = Timer(Duration(milliseconds: 300), () {
-      if (value.trim().isNotEmpty) {
-        final bloc = DependScope.of(
-          context,
-          listen: false,
-        ).dependModel.searchBloc;
-        bloc.add(SearchMovie(query: value.trim()));
-      }
-    });
   }
 
   @override
@@ -76,11 +71,9 @@ class _SearchScreenState extends State<SearchScreen> with LoggerMixin {
         child: CustomScrollView(
           slivers: [
             SliverAppBar(
-              pinned: true,
-              floating: false,
-              toolbarHeight: AppSizes.screenHeight(context) * 0.12,
               expandedHeight: AppSizes.screenHeight(context) * 0.2,
-              collapsedHeight: AppSizes.screenHeight(context) * 0.12,
+              floating: true,
+              snap: true,
               backgroundColor: theme.surface,
               title: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -167,10 +160,39 @@ class _SearchScreenState extends State<SearchScreen> with LoggerMixin {
             BlocBuilder<HistoryBloc, HistoryState>(
               bloc: historyBloc,
               builder: (context, state) {
-                if (textController.text.isNotEmpty || state is! HistoryLoaded)
-                  return SliverToBoxAdapter(child: SizedBox.shrink());
-
                 return switch (state) {
+                  HistoryEmpty() => SliverToBoxAdapter(
+                    child: Padding(
+                      padding: const EdgeInsets.all(24),
+                      child: Center(
+                        child: Text(
+                          'История поиска пуста',
+                          style: Theme.of(context).textTheme.headlineSmall,
+                        ),
+                      ),
+                    ),
+                  ),
+                  HistoryLoading() => SliverToBoxAdapter(
+                    child: Padding(
+                      padding: const EdgeInsets.all(24),
+                      child: Center(
+                        child: CircularProgressIndicator.adaptive(
+                          valueColor: AlwaysStoppedAnimation(theme.primary),
+                        ),
+                      ),
+                    ),
+                  ),
+
+                  HistoryInitial() => SliverToBoxAdapter(
+                    child: Padding(
+                      padding: const EdgeInsets.all(24),
+                      child: Center(
+                        child: CircularProgressIndicator.adaptive(
+                          valueColor: AlwaysStoppedAnimation(theme.primary),
+                        ),
+                      ),
+                    ),
+                  ),
                   HistoryLoaded() => SliverList.builder(
                     itemCount: state.historyList.length,
                     itemBuilder: (context, index) {
@@ -194,6 +216,19 @@ class _SearchScreenState extends State<SearchScreen> with LoggerMixin {
                       );
                     },
                   ),
+
+                  HistoryError() => SliverToBoxAdapter(
+                    child: Padding(
+                      padding: const EdgeInsets.all(24),
+                      child: Center(
+                        child: Text(
+                          'Ошибка загрузки истории',
+                          style: Theme.of(context).textTheme.headlineSmall
+                              ?.copyWith(color: theme.error),
+                        ),
+                      ),
+                    ),
+                  ),
                 };
               },
             ),
@@ -202,11 +237,7 @@ class _SearchScreenState extends State<SearchScreen> with LoggerMixin {
               bloc: bloc,
               listener: (context, state) {
                 if (state is SearchLoaded) {
-                  historyBloc.add(
-                    AddHistory(query: 'алах $state'
-                      
-                    ),
-                  );
+                  historyBloc.add(LoadHistory());
                 }
               },
 
