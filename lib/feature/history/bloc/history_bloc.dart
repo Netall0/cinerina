@@ -13,10 +13,13 @@ class HistoryBloc extends Bloc<HistoryEvent, HistoryState> with LoggerMixin {
   HistoryBloc({required ISearchHistoryRepository searchHistoryRepository})
     : _searchHistoryRepository = searchHistoryRepository,
       super(HistoryInitial()) {
-    on<LoadHistory>(_loadHistory);
-    on<AddHistory>(_addHistory);
-    on<DeleteHistory>(_deleteHistory);
-    on<ResetHistory>(_resetHistory);
+        on<HistoryEvent>(
+          (event, emit) => switch (event) {
+            LoadHistory() => _loadHistory(event, emit),
+            DeleteHistory() => _deleteHistory(event, emit),
+            ResetHistory() => _resetHistory(event, emit),
+          },
+        );
   }
 
   Future<void> _deleteHistory(
@@ -46,19 +49,7 @@ class HistoryBloc extends Bloc<HistoryEvent, HistoryState> with LoggerMixin {
     }
   }
 
-  Future<void> _addHistory(AddHistory event, Emitter<HistoryState> emit) async {
-    if (event.query.trim().isEmpty) return;
 
-    try {
-      await _searchHistoryRepository.addSearchHistory(event.query.trim());
-      final result = await _searchHistoryRepository.getSearchHistory();
-      emit(
-        result.isNotEmpty ? HistoryLoaded(historyList: result) : HistoryEmpty(),
-      );
-    } catch (e) {
-      logError(e.toString());
-    }
-  }
 
   Future<void> _loadHistory(
     LoadHistory event,
