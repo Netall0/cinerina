@@ -1,4 +1,4 @@
-import 'package:cinerina/core/router/Favorites_screen.dart';
+import 'package:cinerina/core/router/favorites_screen.dart';
 import 'package:cinerina/core/router/profile_screen.dart';
 import 'package:cinerina/feature/app/widget/app_shell.dart';
 import 'package:cinerina/feature/search/model/search_model.dart';

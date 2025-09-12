@@ -1,9 +1,11 @@
 import 'dart:async';
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cinerina/core/database/drift.dart';
 import 'package:cinerina/core/extension/string_extension.dart';
 import 'package:cinerina/core/router/router.dart';
 import 'package:cinerina/core/util/logger.dart';
+import 'package:cinerina/feature/favorites/model/favorites_model.dart';
 import 'package:cinerina/feature/history/bloc/history_bloc.dart';
 import 'package:cinerina/feature/initialization/widget/depend_scope.dart';
 import 'package:cinerina/feature/search/bloc/search_bloc.dart';
@@ -39,6 +41,7 @@ class _SearchScreenState extends State<SearchScreen> with LoggerMixin {
       context,
       listen: true,
     ).dependModel.historyBloc.add(LoadHistory());
+
     super.didChangeDependencies();
   }
 
@@ -301,8 +304,8 @@ class _SearchScreenState extends State<SearchScreen> with LoggerMixin {
                                       heroTag:
                                           state.searchList.docs?[index].id
                                               ?.toString()
-                                              .orIfEmpty('movie-$index') ??
-                                          'movie-$index',
+                                              .orIfEmpty('$index') ??
+                                          '$index',
                                       imageUrl:
                                           state
                                               .searchList
@@ -429,6 +432,52 @@ class _SearchScreenState extends State<SearchScreen> with LoggerMixin {
                                             ),
                                           ],
                                         ),
+                                      ),
+                                      IconButton(
+                                        onPressed: () async {
+                                          final movie = state.searchList.docs?[index];
+                                          bloc.add(
+                                            ToggleFavorite(favoritesModel: FavoritesModel(
+                                              name:
+                                          state.searchList.docs?[index].name
+                                              .orIfEmpty(
+                                                state
+                                                        .searchList
+                                                        .docs?[index]
+                                                        .alternativeName ??
+                                                    '',
+                                              ) ??
+                                          '',
+                                      heroTag:
+                                          state.searchList.docs?[index].id
+                                              ?.toString()
+                                              .orIfEmpty('$index') ??
+                                          '$index',
+                                      imageUrl:
+                                          state
+                                              .searchList
+                                              .docs?[index]
+                                              .poster
+                                              ?.previewUrl
+                                              .orIfEmpty(
+                                                state
+                                                        .searchList
+                                                        .docs?[index]
+                                                        .poster
+                                                        ?.url ??
+                                                    '',
+                                              ) ??
+                                          '',
+                                      description:
+                                          state
+                                              .searchList
+                                              .docs?[index]
+                                              .description ??
+                                          '', movie: movie,
+                                            ))
+                                          );
+                                        },
+                                        icon: Icon(Icons.favorite),
                                       ),
                                     ],
                                   ),
