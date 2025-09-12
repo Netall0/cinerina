@@ -52,7 +52,7 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> with LoggerMixin {
       logDebug('Favorites updated: ${favoritesList.length} items');
 
       return prevState.copyWith(favoritesList: favoritesList);
-    }on Object catch (e) {
+    } on Object catch (e) {
       emit(SearchError(e.toString()));
     }
   }
