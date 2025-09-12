@@ -1,4 +1,5 @@
 import 'package:cinerina/core/router/router.dart';
+import 'package:cinerina/feature/favorites/bloc/favorites_bloc.dart';
 import 'package:cinerina/feature/history/bloc/history_bloc.dart';
 import 'package:cinerina/feature/initialization/widget/depend_scope.dart';
 import 'package:cinerina/feature/search/bloc/search_bloc.dart';
@@ -17,6 +18,7 @@ class _AppMaterialState extends State<AppMaterial> {
   @override
   void didChangeDependencies() {
     DependScope.of(context,listen: false).dependModel.searchBloc.add(SearchMovie(query: ''));
+    DependScope.of(context,listen: true).dependModel.favoritesBloc.add(LoadFavorites());
     super.didChangeDependencies();
   }
 

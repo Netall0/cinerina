@@ -44,7 +44,7 @@ class HistoryBloc extends Bloc<HistoryEvent, HistoryState> with LoggerMixin {
     try {
       await _searchHistoryRepository.resetSearchHistory();
       emit(HistoryEmpty());
-    } catch (e) {
+    }on Object catch(e) {
       logError(e.toString());
     }
   }

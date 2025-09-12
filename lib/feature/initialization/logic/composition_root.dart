@@ -1,4 +1,7 @@
+import 'package:cinerina/core/database/drift.dart';
 import 'package:cinerina/core/util/logger.dart';
+import 'package:cinerina/feature/favorites/bloc/favorites_bloc.dart';
+import 'package:cinerina/feature/favorites/data/i_favorites_repository.dart';
 import 'package:cinerina/feature/history/bloc/history_bloc.dart';
 import 'package:cinerina/feature/initialization/model/depend_container.dart';
 import 'package:cinerina/feature/search/bloc/search_bloc.dart';
@@ -41,23 +44,39 @@ final class CompositionRoot with LoggerMixin {
       sharedPreferences,
     );
 
+    final IFavoritesRepository favoritesRepository = IFavoritesRepository(
+      appDatabase: _initAppDatabase(),
+    );
+
     final themeController = _initSettingsController(settingsRepository);
     final searchBloc = _initSearchBloc(
       searchRepository,
       searchHistoryRepository,
+      favoritesRepository,
     );
 
-    final HistoryBloc historyBloc = _initHistoryBloc(
-      searchHistoryRepository,
-    );
+    final HistoryBloc historyBloc = _initHistoryBloc(searchHistoryRepository);
+
+    final AppDatabase appDatabase = _initAppDatabase();
+
+    final FavoritesBloc favoritesBloc = FavoritesBloc(favoritesRepository: favoritesRepository);
 
     return DependContainer(
+      favoritesBloc: favoritesBloc,
+      appDatabase: appDatabase,
       historyBloc: historyBloc,
       searchBloc: searchBloc,
       sharedPreferences: sharedPreferences,
       dio: dio,
       themeController: themeController,
     );
+  }
+
+  AppDatabase _initAppDatabase() {
+    logDebug('создание appdatabase...');
+    final appDatabase = AppDatabase(name: 'appDatabase');
+    logDebug('AppDabase создан');
+    return appDatabase;
   }
 
   ISearchHistoryRepository _initSearchHistoryRepository(
@@ -68,7 +87,6 @@ final class CompositionRoot with LoggerMixin {
     logDebug('SearchHistoryRepository создан');
     return repo;
   }
-
 
   /// SharedPreferences
   Future<SharedPreferences> _initSharedPreferences() async {
@@ -122,11 +140,13 @@ final class CompositionRoot with LoggerMixin {
   SearchBloc _initSearchBloc(
     ISearchRepository searchrepository,
     ISearchHistoryRepository searchHistoryRepository,
+    IFavoritesRepository favoritesRepository,
   ) {
     logDebug('Создание SearchBloc...');
     final bloc = SearchBloc(
       searchRepository: searchrepository,
       searchHistoryRepository: searchHistoryRepository,
+      favoritesRepository: favoritesRepository,
     );
     logDebug('SearchBloc создан');
     return bloc;
@@ -136,11 +156,8 @@ final class CompositionRoot with LoggerMixin {
     ISearchHistoryRepository searchHistoryRepository,
   ) {
     logDebug('Создание HistoryBloc...');
-    final bloc = HistoryBloc(
-      searchHistoryRepository: searchHistoryRepository,
-    );
+    final bloc = HistoryBloc(searchHistoryRepository: searchHistoryRepository);
     logDebug('HistoryBloc создан');
     return bloc;
   }
-
 }

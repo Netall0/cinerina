@@ -2,13 +2,15 @@ part of 'search_bloc.dart';
 
 @immutable
 sealed class SearchState {
-  const SearchState({this.searchList});
+  const SearchState({this.searchList,this.favoritesList});
 
   final SearchModel? searchList;
+
+  final List<FavoritesModel>? favoritesList;
 }
 
 final class SearchInitial extends SearchState {
-  const SearchInitial({super.searchList});
+  const SearchInitial({super.searchList,super.favoritesList});
 
   @override
   bool operator ==(Object other) =>
@@ -20,7 +22,7 @@ final class SearchInitial extends SearchState {
 }
 
 final class SearchLoading extends SearchState {
-  const SearchLoading({super.searchList});
+  const SearchLoading({super.searchList,super.favoritesList});
 
   @override
   bool operator ==(Object other) =>
@@ -32,23 +34,42 @@ final class SearchLoading extends SearchState {
 }
 
 final class SearchLoaded extends SearchState {
-  const SearchLoaded({required this.searchList});
+  const SearchLoaded({required this.searchList, required this.favoritesList,});
 
   @override
   final SearchModel searchList;
 
   @override
-  bool operator ==(Object other) =>
+  final List<FavoritesModel> favoritesList;
+
+
+
+  operator ==(Object other) =>
       identical(this, other) ||
-      other is SearchLoaded && searchList == other.searchList;
+      other is SearchLoaded &&
+          runtimeType == other.runtimeType &&
+          searchList == other.searchList &&
+          favoritesList == other.favoritesList;
 
   @override
-  int get hashCode => Object.hashAll([searchList]);
+  int get hashCode => Object.hashAll([searchList,favoritesList]);
+
+
+
+  copyWith({
+    SearchModel? searchList,
+    List<FavoritesModel>? favoritesList,
+  }) {
+    return SearchLoaded(
+      searchList: searchList ?? this.searchList,
+      favoritesList: favoritesList ?? this.favoritesList,
+    );
+  }
+
 }
 
 final class SearchEmpty extends SearchState {
-  const SearchEmpty({super.searchList, this.query});
-
+  const SearchEmpty({super.searchList, this.query,super.favoritesList});
   final String? query;
 
   @override
@@ -58,6 +79,7 @@ final class SearchEmpty extends SearchState {
 
   @override
   int get hashCode => Object.hashAll([searchList]);
+
 }
 
 final class SearchError extends SearchState {
