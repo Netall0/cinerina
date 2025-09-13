@@ -31,19 +31,3 @@ final class SearchMovie extends SearchEvent {
           query == other.query;
 }
 
-final class ToggleFavorite extends SearchEvent {
-  const ToggleFavorite({required this.favoritesModel});
-
-  @override
-  final FavoritesModel? favoritesModel;
-
-  @override
-  int get hashCode => Object.hashAll([favoritesModel]);
-
-  @override
-  operator ==(Object other) =>
-      identical(this, other) ||
-      other is ToggleFavorite &&
-          runtimeType == other.runtimeType &&
-          favoritesModel == other.favoritesModel;
-}

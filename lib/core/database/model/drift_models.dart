@@ -1,7 +1,7 @@
 import 'package:drift/drift.dart';
 
 class SearchDriftModel extends Table {
-  IntColumn get id => integer().autoIncrement()();
+  IntColumn get id => integer()();
   TextColumn get title => text()();
   TextColumn get description =>
       text().withDefault(const Constant(''))(); 

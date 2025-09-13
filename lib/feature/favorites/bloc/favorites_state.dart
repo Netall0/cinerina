@@ -30,6 +30,8 @@ final class FavoritesLoaded extends FavoritesState {
   int get hashCode => Object.hashAll([favoritesList]);
 }
 
+
+
 final class FavoritesError extends FavoritesState {
   const FavoritesError(this.error);
 
