@@ -5,4 +5,5 @@ abstract interface class FavoritesRepository {
   Future<void> addFavorites(FavoritesModel model);
   Future<void> removeFromFavorites(int id);
   Future<void> resetFavorites();
+  Future<bool> isInFavorites(int id);
 }

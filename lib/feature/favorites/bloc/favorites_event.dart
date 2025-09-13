@@ -1,27 +1,26 @@
 part of 'favorites_bloc.dart';
 
 @immutable
-sealed class FavoritesEvent {
-  const FavoritesEvent({this.id});
-  final int? id;
-}
+sealed class FavoritesEvent {}
 
 final class LoadFavorites extends FavoritesEvent {}
 
-// final class DeleteFavorite extends FavoritesEvent {
-//   const DeleteFavorite({required this.id});
-//   @override
-//   final int id;
+final class AddFavorite extends FavoritesEvent {
+  final FavoritesModel? model;
 
-//   @override
-//   int get hashCode => Object.hashAll([id]);
+  AddFavorite({required this.model});
+}
 
-//   @override
-//   operator ==(Object other) =>
-//       identical(this, other) ||
-//       other is DeleteFavorite &&
-//           runtimeType == other.runtimeType &&
-//           id == other.id;
-// }
+final class DeleteFavorite extends FavoritesEvent {
+  final FavoritesModel? model;
 
-// final class ResetFavorites extends FavoritesEvent {}
+  DeleteFavorite({required this.model});
+}
+
+final class ToggleFavorite extends FavoritesEvent {
+  final FavoritesModel? model;
+
+  ToggleFavorite({required this.model});
+}
+
+final class ResetFavorites extends FavoritesEvent {}

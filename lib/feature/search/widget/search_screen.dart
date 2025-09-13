@@ -5,6 +5,7 @@ import 'package:cinerina/core/database/drift.dart';
 import 'package:cinerina/core/extension/string_extension.dart';
 import 'package:cinerina/core/router/router.dart';
 import 'package:cinerina/core/util/logger.dart';
+import 'package:cinerina/feature/favorites/bloc/favorites_bloc.dart';
 import 'package:cinerina/feature/favorites/model/favorites_model.dart';
 import 'package:cinerina/feature/history/bloc/history_bloc.dart';
 import 'package:cinerina/feature/initialization/widget/depend_scope.dart';
@@ -32,6 +33,7 @@ class _SearchScreenState extends State<SearchScreen> with LoggerMixin {
 
   @override
   void initState() {
+    super.initState();
     textController = TextEditingController();
   }
 
@@ -39,7 +41,7 @@ class _SearchScreenState extends State<SearchScreen> with LoggerMixin {
   void didChangeDependencies() {
     DependScope.of(
       context,
-      listen: true,
+      listen: false,
     ).dependModel.historyBloc.add(LoadHistory());
 
     super.didChangeDependencies();
@@ -54,13 +56,14 @@ class _SearchScreenState extends State<SearchScreen> with LoggerMixin {
 
   @override
   Widget build(BuildContext context) {
+    final favoritesBloc = DependScope.of(context).dependModel.favoritesBloc;
     final themeController = DependScope.of(context).dependModel.themeController;
     final theme = Theme.of(context).extension<AppTheme>()!;
     final layout = LayoutInherited.of(context);
     final bloc = DependScope.of(context).dependModel.searchBloc;
     final historyBloc = DependScope.of(
       context,
-      listen: true,
+      listen: false,
     ).dependModel.historyBloc;
 
     return Scaffold(
@@ -435,49 +438,83 @@ class _SearchScreenState extends State<SearchScreen> with LoggerMixin {
                                       ),
                                       IconButton(
                                         onPressed: () async {
-                                          final movie = state.searchList.docs?[index];
-                                          bloc.add(
-                                            ToggleFavorite(favoritesModel: FavoritesModel(
-                                              name:
-                                          state.searchList.docs?[index].name
-                                              .orIfEmpty(
-                                                state
+                                          final movie =
+                                              state.searchList.docs?[index];
+                                         favoritesBloc.add(
+                                            ToggleFavorite(
+                                              model :FavoritesModel(
+                                                id: state.searchList.docs?[index].id ?? DateTime.now().millisecondsSinceEpoch,
+                                                name:
+                                                    state
                                                         .searchList
                                                         .docs?[index]
-                                                        .alternativeName ??
+                                                        .name
+                                                        .orIfEmpty(
+                                                          state
+                                                                  .searchList
+                                                                  .docs?[index]
+                                                                  .alternativeName ??
+                                                              '',
+                                                        ) ??
                                                     '',
-                                              ) ??
-                                          '',
-                                      heroTag:
-                                          state.searchList.docs?[index].id
-                                              ?.toString()
-                                              .orIfEmpty('$index') ??
-                                          '$index',
-                                      imageUrl:
-                                          state
-                                              .searchList
-                                              .docs?[index]
-                                              .poster
-                                              ?.previewUrl
-                                              .orIfEmpty(
-                                                state
+
+                                                heroTag:
+                                                    state
+                                                        .searchList
+                                                        .docs?[index]
+                                                        .id
+                                                        ?.toString()
+                                                        .orIfEmpty('$index') ??
+                                                    '$index',
+                                                imageUrl:
+                                                    state
                                                         .searchList
                                                         .docs?[index]
                                                         .poster
-                                                        ?.url ??
+                                                        ?.previewUrl
+                                                        .orIfEmpty(
+                                                          state
+                                                                  .searchList
+                                                                  .docs?[index]
+                                                                  .poster
+                                                                  ?.url ??
+                                                              '',
+                                                        ) ??
                                                     '',
-                                              ) ??
-                                          '',
-                                      description:
-                                          state
-                                              .searchList
-                                              .docs?[index]
-                                              .description ??
-                                          '', movie: movie,
-                                            ))
+                                                description:
+                                                    state
+                                                        .searchList
+                                                        .docs?[index]
+                                                        .description ??
+                                                    '',
+                                                movie: movie,
+                                              ),
+                                            ),
                                           );
                                         },
-                                        icon: Icon(Icons.favorite),
+                                        icon: Icon(
+                                          state.favoritesList.any(
+                                                (fav) =>
+                                                    fav.movie?.id ==
+                                                    state
+                                                        .searchList
+                                                        .docs?[index]
+                                                        .id,
+                                              )
+                                              ? Icons.favorite
+                                              : Icons.favorite_border,
+                                          color:
+                                              state.favoritesList.any(
+                                                (fav) =>
+                                                    fav.movie?.id ==
+                                                    state
+                                                        .searchList
+                                                        .docs?[index]
+                                                        .id,
+                                              )
+                                              ? theme.error
+                                              : theme.textSecondary,
+                                        ),
                                       ),
                                     ],
                                   ),

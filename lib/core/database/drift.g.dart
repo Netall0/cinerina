@@ -15,12 +15,8 @@ class $SearchDriftModelTable extends SearchDriftModel
     'id',
     aliasedName,
     false,
-    hasAutoIncrement: true,
     type: DriftSqlType.int,
-    requiredDuringInsert: false,
-    defaultConstraints: GeneratedColumn.constraintIsAlways(
-      'PRIMARY KEY AUTOINCREMENT',
-    ),
+    requiredDuringInsert: true,
   );
   static const VerificationMeta _titleMeta = const VerificationMeta('title');
   @override
@@ -85,6 +81,8 @@ class $SearchDriftModelTable extends SearchDriftModel
     final data = instance.toColumns(true);
     if (data.containsKey('id')) {
       context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
     }
     if (data.containsKey('title')) {
       context.handle(
@@ -123,7 +121,7 @@ class $SearchDriftModelTable extends SearchDriftModel
   }
 
   @override
-  Set<GeneratedColumn> get $primaryKey => {id};
+  Set<GeneratedColumn> get $primaryKey => const {};
   @override
   SearchDriftModelData map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
@@ -273,20 +271,24 @@ class SearchDriftModelCompanion extends UpdateCompanion<SearchDriftModelData> {
   final Value<String> description;
   final Value<String> photo;
   final Value<DateTime> createdAt;
+  final Value<int> rowid;
   const SearchDriftModelCompanion({
     this.id = const Value.absent(),
     this.title = const Value.absent(),
     this.description = const Value.absent(),
     this.photo = const Value.absent(),
     this.createdAt = const Value.absent(),
+    this.rowid = const Value.absent(),
   });
   SearchDriftModelCompanion.insert({
-    this.id = const Value.absent(),
+    required int id,
     required String title,
     this.description = const Value.absent(),
     required String photo,
     required DateTime createdAt,
-  }) : title = Value(title),
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       title = Value(title),
        photo = Value(photo),
        createdAt = Value(createdAt);
   static Insertable<SearchDriftModelData> custom({
@@ -295,6 +297,7 @@ class SearchDriftModelCompanion extends UpdateCompanion<SearchDriftModelData> {
     Expression<String>? description,
     Expression<String>? photo,
     Expression<DateTime>? createdAt,
+    Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -302,6 +305,7 @@ class SearchDriftModelCompanion extends UpdateCompanion<SearchDriftModelData> {
       if (description != null) 'description': description,
       if (photo != null) 'photo': photo,
       if (createdAt != null) 'created_at': createdAt,
+      if (rowid != null) 'rowid': rowid,
     });
   }
 
@@ -311,6 +315,7 @@ class SearchDriftModelCompanion extends UpdateCompanion<SearchDriftModelData> {
     Value<String>? description,
     Value<String>? photo,
     Value<DateTime>? createdAt,
+    Value<int>? rowid,
   }) {
     return SearchDriftModelCompanion(
       id: id ?? this.id,
@@ -318,6 +323,7 @@ class SearchDriftModelCompanion extends UpdateCompanion<SearchDriftModelData> {
       description: description ?? this.description,
       photo: photo ?? this.photo,
       createdAt: createdAt ?? this.createdAt,
+      rowid: rowid ?? this.rowid,
     );
   }
 
@@ -339,6 +345,9 @@ class SearchDriftModelCompanion extends UpdateCompanion<SearchDriftModelData> {
     if (createdAt.present) {
       map['created_at'] = Variable<DateTime>(createdAt.value);
     }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
     return map;
   }
 
@@ -349,7 +358,8 @@ class SearchDriftModelCompanion extends UpdateCompanion<SearchDriftModelData> {
           ..write('title: $title, ')
           ..write('description: $description, ')
           ..write('photo: $photo, ')
-          ..write('createdAt: $createdAt')
+          ..write('createdAt: $createdAt, ')
+          ..write('rowid: $rowid')
           ..write(')'))
         .toString();
   }
@@ -370,11 +380,12 @@ abstract class _$AppDatabase extends GeneratedDatabase {
 
 typedef $$SearchDriftModelTableCreateCompanionBuilder =
     SearchDriftModelCompanion Function({
-      Value<int> id,
+      required int id,
       required String title,
       Value<String> description,
       required String photo,
       required DateTime createdAt,
+      Value<int> rowid,
     });
 typedef $$SearchDriftModelTableUpdateCompanionBuilder =
     SearchDriftModelCompanion Function({
@@ -383,6 +394,7 @@ typedef $$SearchDriftModelTableUpdateCompanionBuilder =
       Value<String> description,
       Value<String> photo,
       Value<DateTime> createdAt,
+      Value<int> rowid,
     });
 
 class $$SearchDriftModelTableFilterComposer
@@ -524,26 +536,30 @@ class $$SearchDriftModelTableTableManager
                 Value<String> description = const Value.absent(),
                 Value<String> photo = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
               }) => SearchDriftModelCompanion(
                 id: id,
                 title: title,
                 description: description,
                 photo: photo,
                 createdAt: createdAt,
+                rowid: rowid,
               ),
           createCompanionCallback:
               ({
-                Value<int> id = const Value.absent(),
+                required int id,
                 required String title,
                 Value<String> description = const Value.absent(),
                 required String photo,
                 required DateTime createdAt,
+                Value<int> rowid = const Value.absent(),
               }) => SearchDriftModelCompanion.insert(
                 id: id,
                 title: title,
                 description: description,
                 photo: photo,
                 createdAt: createdAt,
+                rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0
               .map((e) => (e.readTable(table), BaseReferences(db, table, e)))

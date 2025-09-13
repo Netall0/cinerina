@@ -29,12 +29,13 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> with LoggerMixin {
     on<SearchEvent>(
       (event, emit) => switch (event) {
         SearchMovie() => _searchMovies(event, emit),
-        ToggleFavorite() => _toggleFavorite(event, emit),
       },
       transformer: BlocTransformer.sequential(),
     );
   }
 
+<<<<<<< HEAD
+=======
   Future<void> _toggleFavorite(
     ToggleFavorite event,
     Emitter<SearchState> emit,
@@ -56,6 +57,7 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> with LoggerMixin {
       emit(SearchError(e.toString()));
     }
   }
+>>>>>>> db301e68190f5ff264b3d8c9033ffb0952d7d721
 
   Future<void> _searchMovies(
     SearchMovie event,
