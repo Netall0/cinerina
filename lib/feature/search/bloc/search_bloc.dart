@@ -34,6 +34,30 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> with LoggerMixin {
     );
   }
 
+<<<<<<< HEAD
+=======
+  Future<void> _toggleFavorite(
+    ToggleFavorite event,
+    Emitter<SearchState> emit,
+  ) async {
+    try {
+      final prevState = state;
+
+      if (prevState is! SearchLoaded) {
+        logDebug('not SearchLoaded');
+        return;
+      }
+
+      await _favoritesRepository.addFavorites(event.favoritesModel!);
+      final favoritesList = await _favoritesRepository.getFavorites();
+      logDebug('Favorites updated: ${favoritesList.length} items');
+
+      return prevState.copyWith(favoritesList: favoritesList);
+    } on Object catch (e) {
+      emit(SearchError(e.toString()));
+    }
+  }
+>>>>>>> db301e68190f5ff264b3d8c9033ffb0952d7d721
 
   Future<void> _searchMovies(
     SearchMovie event,

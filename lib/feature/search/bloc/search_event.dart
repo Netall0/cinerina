@@ -11,6 +11,8 @@ sealed class SearchEvent {
   final FavoritesModel? favoritesModel;
 }
 
+
+
 final class SearchMovie extends SearchEvent {
   const SearchMovie({required this.query, this.completer});
 
