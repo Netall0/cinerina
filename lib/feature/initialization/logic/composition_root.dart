@@ -48,18 +48,22 @@ final class CompositionRoot with LoggerMixin {
       appDatabase: _initAppDatabase(),
     );
 
+
     final themeController = _initSettingsController(settingsRepository);
-    final searchBloc = _initSearchBloc(
-      searchRepository,
-      searchHistoryRepository,
-      favoritesRepository,
-    );
+
 
     final HistoryBloc historyBloc = _initHistoryBloc(searchHistoryRepository);
 
     final AppDatabase appDatabase = _initAppDatabase();
 
     final FavoritesBloc favoritesBloc = FavoritesBloc(favoritesRepository: favoritesRepository);
+
+        final searchBloc = _initSearchBloc(
+      searchRepository,
+      searchHistoryRepository,
+      favoritesRepository,
+      appDatabase
+    );
 
     return DependContainer(
       favoritesBloc: favoritesBloc,
@@ -141,9 +145,11 @@ final class CompositionRoot with LoggerMixin {
     ISearchRepository searchrepository,
     ISearchHistoryRepository searchHistoryRepository,
     IFavoritesRepository favoritesRepository,
+    AppDatabase appDatabase
   ) {
     logDebug('Создание SearchBloc...');
     final bloc = SearchBloc(
+      appDatabase: appDatabase,
       searchRepository: searchrepository,
       searchHistoryRepository: searchHistoryRepository,
       favoritesRepository: favoritesRepository,

@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:cinerina/core/database/drift.dart';
 import 'package:cinerina/core/extension/string_extension.dart';
 import 'package:cinerina/core/router/router.dart';
 import 'package:cinerina/core/util/logger.dart';
@@ -39,6 +38,7 @@ class _SearchScreenState extends State<SearchScreen> with LoggerMixin {
 
   @override
   void didChangeDependencies() {
+    DependScope.of(context).dependModel.favoritesBloc.add(LoadFavorites());
     DependScope.of(
       context,
       listen: false,
@@ -56,7 +56,10 @@ class _SearchScreenState extends State<SearchScreen> with LoggerMixin {
 
   @override
   Widget build(BuildContext context) {
-    final favoritesBloc = DependScope.of(context).dependModel.favoritesBloc;
+    final favoritesBloc = DependScope.of(
+      context,
+      listen: true,
+    ).dependModel.favoritesBloc;
     final themeController = DependScope.of(context).dependModel.themeController;
     final theme = Theme.of(context).extension<AppTheme>()!;
     final layout = LayoutInherited.of(context);
@@ -440,10 +443,16 @@ class _SearchScreenState extends State<SearchScreen> with LoggerMixin {
                                         onPressed: () async {
                                           final movie =
                                               state.searchList.docs?[index];
-                                         favoritesBloc.add(
+                                          favoritesBloc.add(
                                             ToggleFavorite(
-                                              model :FavoritesModel(
-                                                id: state.searchList.docs?[index].id ?? DateTime.now().millisecondsSinceEpoch,
+                                              model: FavoritesModel(
+                                                id:
+                                                    state
+                                                        .searchList
+                                                        .docs?[index]
+                                                        .id ??
+                                                    DateTime.now()
+                                                        .millisecondsSinceEpoch,
                                                 name:
                                                     state
                                                         .searchList
@@ -492,29 +501,34 @@ class _SearchScreenState extends State<SearchScreen> with LoggerMixin {
                                             ),
                                           );
                                         },
-                                        icon: Icon(
-                                          state.favoritesList.any(
-                                                (fav) =>
-                                                    fav.movie?.id ==
-                                                    state
-                                                        .searchList
-                                                        .docs?[index]
-                                                        .id,
-                                              )
-                                              ? Icons.favorite
-                                              : Icons.favorite_border,
-                                          color:
-                                              state.favoritesList.any(
-                                                (fav) =>
-                                                    fav.movie?.id ==
-                                                    state
-                                                        .searchList
-                                                        .docs?[index]
-                                                        .id,
-                                              )
-                                              ? theme.error
-                                              : theme.textSecondary,
-                                        ),
+                                        icon:
+                                            BlocSelector<
+                                              FavoritesBloc,
+                                              FavoritesState,
+                                              bool
+                                            >(
+                                              bloc: favoritesBloc,
+                                              selector: (favState) {
+                                                final movie = state
+                                                    .searchList
+                                                    .docs?[index];
+                                                if (movie == null) return false;
+                                                return favState.favoritesList!
+                                                    .any(
+                                                      (f) => f.id == movie.id,
+                                                    );
+                                              },
+                                              builder: (context, isFavorite) {
+                                                return Icon(
+                                                  isFavorite
+                                                      ? Icons.favorite
+                                                      : Icons.favorite_border,
+                                                  color: isFavorite
+                                                      ? Colors.red
+                                                      : null,
+                                                );
+                                              },
+                                            ),
                                       ),
                                     ],
                                   ),

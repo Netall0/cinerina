@@ -21,7 +21,7 @@ class FavoritesBloc extends Bloc<FavoritesEvent, FavoritesState> {
         ToggleFavorite() => _toggleFavorite(event, emit),
         ResetFavorites() => _resetFavorites(event, emit),
       },
-      transformer: BlocTransformer.sequential(),
+      transformer: BlocTransformer.restartable(),
     );
   }
 
