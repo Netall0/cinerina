@@ -6,16 +6,23 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 final class IAuthRepository with LoggerMixin implements AuthRepository {
   final SupabaseClient _client = Supabase.instance.client;
 
+  @override
   User? get currentUser => _client.auth.currentUser;
 
 
   IAuthRepository();
 
+
+  @override
+  Stream<User?> get authStateChanges => _client.auth.onAuthStateChange.map((data) => data.session?.user);
+  
+  
+
   @override
   Future<void> signOut() async {
     await _client.auth.signOut();
   }
-
+ 
   @override
   Future<void> singInWithEmail(String email, String password) async {
     try {

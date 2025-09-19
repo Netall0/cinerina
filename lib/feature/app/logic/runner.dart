@@ -9,6 +9,7 @@ import 'package:cinerina/feature/initialization/logic/composition_root.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 final class AppRunner with LoggerMixin {
   Future<void> runner(AppEnvironment environment) async {
@@ -39,6 +40,10 @@ final class AppRunner with LoggerMixin {
       logInfo('App run time: ${stopwatch.elapsed}');
 
       try {
+        await Supabase.initialize(
+          url: AppConfig.supabaseUrl,
+          anonKey: AppConfig.supabaseKey,
+        );
         logInfo('Starting app...');
         final result = await CompositionRoot().compose();
         runApp(AppScope(dependModel: result.dependModel));

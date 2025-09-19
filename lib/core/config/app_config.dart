@@ -11,6 +11,9 @@ class AppConfig {
     'IS_PRODUCTION',
     defaultValue: false,
   );
+
+  static const supabaseUrl = String.fromEnvironment('SUPABASE_URL');
+  static const supabaseKey = String.fromEnvironment('SUPABASE_KEY');
   
   // Enum на основе isProduction
   static AppEnvironment get environment => 

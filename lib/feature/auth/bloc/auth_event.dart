@@ -2,10 +2,29 @@ part of 'auth_bloc.dart';
 
 @immutable
 sealed class AuthEvent {
-  const AuthEvent({this.email, this.password});
+  const AuthEvent({this.email, this.password,this.user});
 
   final String? email;
   final String? password;
+  final User? user;
+}
+
+
+final class AuthUserChanged extends AuthEvent {
+  const AuthUserChanged(this.user);
+
+
+  @override
+  // TODO: implement user
+  final User? user;
+
+  @override
+  int get hashCode => Object.hashAll([user]);
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is AuthUserChanged && user == other.user;
 }
 
 final class AuthChechRequested extends AuthEvent {
