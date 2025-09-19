@@ -1,5 +1,7 @@
 import 'package:cinerina/core/database/drift.dart';
 import 'package:cinerina/core/util/logger.dart';
+import 'package:cinerina/feature/auth/bloc/auth_bloc.dart';
+import 'package:cinerina/feature/auth/data/i_auth_repository.dart';
 import 'package:cinerina/feature/favorites/bloc/favorites_bloc.dart';
 import 'package:cinerina/feature/favorites/data/i_favorites_repository.dart';
 import 'package:cinerina/feature/history/bloc/history_bloc.dart';
@@ -48,12 +50,9 @@ final class CompositionRoot with LoggerMixin {
       appDatabase: _initAppDatabase(),
     );
 
+
     final themeController = _initSettingsController(settingsRepository);
-    final searchBloc = _initSearchBloc(
-      searchRepository,
-      searchHistoryRepository,
-      favoritesRepository,
-    );
+
 
     final HistoryBloc historyBloc = _initHistoryBloc(searchHistoryRepository);
 
@@ -61,7 +60,15 @@ final class CompositionRoot with LoggerMixin {
 
     final FavoritesBloc favoritesBloc = FavoritesBloc(favoritesRepository: favoritesRepository);
 
+        final searchBloc = _initSearchBloc(
+      searchRepository,
+      searchHistoryRepository,
+      favoritesRepository,
+      appDatabase
+    );
+
     return DependContainer(
+      authBloc: AuthBloc(authRepository: IAuthRepository()), //TODO потом
       favoritesBloc: favoritesBloc,
       appDatabase: appDatabase,
       historyBloc: historyBloc,
@@ -141,9 +148,11 @@ final class CompositionRoot with LoggerMixin {
     ISearchRepository searchrepository,
     ISearchHistoryRepository searchHistoryRepository,
     IFavoritesRepository favoritesRepository,
+    AppDatabase appDatabase
   ) {
     logDebug('Создание SearchBloc...');
     final bloc = SearchBloc(
+      appDatabase: appDatabase,
       searchRepository: searchrepository,
       searchHistoryRepository: searchHistoryRepository,
       favoritesRepository: favoritesRepository,

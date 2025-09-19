@@ -50,6 +50,7 @@ dependencies:
   cached_network_image: ^3.4.1
   go_router_builder: ^4.0.1
   uuid: ^4.5.1
+  supabase_flutter: ^2.10.1
 
 
 workspace:

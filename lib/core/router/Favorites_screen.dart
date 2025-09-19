@@ -13,13 +13,13 @@ class FavoritesScreen extends StatefulWidget {
 class _FavoritesScreenState extends State<FavoritesScreen> {
   @override
   void didChangeDependencies() {
-    DependScope.of(context).dependModel.favoritesBloc.add(LoadFavorites());
+    DependScope.of(context,listen: true).dependModel.favoritesBloc.add(LoadFavorites());
     super.didChangeDependencies();
   }
 
   @override
   Widget build(BuildContext context) {
-    final bloc = DependScope.of(context).dependModel.favoritesBloc;
+    final bloc = DependScope.of(context,listen: true).dependModel.favoritesBloc;
 
     return Scaffold(
       backgroundColor: Colors.deepPurpleAccent,
@@ -34,8 +34,12 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
               itemBuilder: (context, index) {
                 return Column(
                   children: [
-                    IconButton(onPressed: (){
-                      bloc.add(ResetFavorites());                    }, icon:Icon(Icons.delete)),
+                    IconButton(
+                      onPressed: () {
+                        bloc.add(ResetFavorites());
+                      },
+                      icon: Icon(Icons.delete),
+                    ),
                     Divider(),
                     Text(state.favoritesList[index].name),
                     IconButton(

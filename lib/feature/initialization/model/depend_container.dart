@@ -1,4 +1,5 @@
 import 'package:cinerina/core/database/drift.dart';
+import 'package:cinerina/feature/auth/bloc/auth_bloc.dart';
 import 'package:cinerina/feature/favorites/bloc/favorites_bloc.dart';
 import 'package:cinerina/feature/history/bloc/history_bloc.dart';
 import 'package:cinerina/feature/search/bloc/search_bloc.dart';
@@ -14,8 +15,10 @@ final class DependContainer {
     required this.searchBloc,
     required this.historyBloc,
     required this.appDatabase,
-    required this.favoritesBloc
+    required this.favoritesBloc,
+    required this.authBloc
   });
+  final AuthBloc authBloc;
   final AppDatabase appDatabase;
   final FavoritesBloc favoritesBloc;
   final SharedPreferences sharedPreferences;

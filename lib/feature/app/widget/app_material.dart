@@ -17,7 +17,10 @@ class AppMaterial extends StatefulWidget {
 class _AppMaterialState extends State<AppMaterial> {
   @override
   void didChangeDependencies() {
-    DependScope.of(context,listen: false).dependModel.searchBloc.add(SearchMovie(query: ''));
+    DependScope.of(
+      context,
+      listen: false,
+    ).dependModel.searchBloc.add(SearchMovie(query: ''));
     super.didChangeDependencies();
   }
 
@@ -27,8 +30,6 @@ class _AppMaterialState extends State<AppMaterial> {
     DependScope.of(context).dependModel.historyBloc.close();
     super.dispose();
   }
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -41,11 +42,9 @@ class _AppMaterialState extends State<AppMaterial> {
       listenable: themeController,
       builder: (context, child) {
         return MaterialApp.router(
-          routerConfig: GoRouter(
-            initialLocation: '/',
-            routes: $appRoutes,
-            debugLogDiagnostics: true,
-            
+          debugShowCheckedModeBanner: false,
+          routerConfig: AppRouter.router(
+            DependScope.of(context).dependModel.authBloc,
           ),
           theme: ThemeData(useMaterial3: true, extensions: [AppTheme.light]),
           darkTheme: ThemeData(useMaterial3: true, extensions: [AppTheme.dark]),
