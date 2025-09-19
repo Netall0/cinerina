@@ -1,6 +1,7 @@
 import 'package:cinerina/core/database/drift.dart';
 import 'package:cinerina/feature/search/model/search_model.dart';
 import 'package:drift/drift.dart';
+import 'package:uuid/uuid.dart' ;
 
 final class FavoritesModel {
   final int id;
