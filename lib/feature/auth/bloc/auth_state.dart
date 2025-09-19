@@ -16,7 +16,7 @@ final class AuthLoading extends AuthState {
 }
 
 final class AuthAuthenticated extends AuthState {
-  const AuthAuthenticated({required this.user,super.errorMessage});
+  const AuthAuthenticated({required this.user, super.errorMessage});
 
   @override
   // TODO: implement user
@@ -29,7 +29,6 @@ final class AuthAuthenticated extends AuthState {
   bool operator ==(Object other) =>
       identical(this, other) ||
       other is AuthAuthenticated && user == other.user;
-
 }
 
 final class AuthUnauthenticated extends AuthState {
@@ -37,5 +36,19 @@ final class AuthUnauthenticated extends AuthState {
 }
 
 final class AuthError extends AuthState {
-  const AuthError({super.user, super.errorMessage});
+  const AuthError({super.user, required this.errorMessage});
+
+  @override
+  // TODO: implement errorMessage
+  final String errorMessage;
+
+    @override
+  int get hashCode => Object.hashAll([errorMessage]);
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is AuthAuthenticated && errorMessage == other.errorMessage;
 }
+
+

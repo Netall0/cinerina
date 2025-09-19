@@ -41,8 +41,9 @@ final class AppRunner with LoggerMixin {
 
       try {
         await Supabase.initialize(
-          url: AppConfig.supabaseUrl,
-          anonKey: AppConfig.supabaseKey,
+          url: 'https://tcvbawgyvgyjbmvgxnow.supabase.co',
+          anonKey:
+              'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRjdmJhd2d5dmd5amJtdmd4bm93Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTgyODY2NDIsImV4cCI6MjA3Mzg2MjY0Mn0.UjH_dh_OhBo9PXKgygjf0qIJ5c0h0SIKu2xwM6Nc9XM',
         );
         logInfo('Starting app...');
         final result = await CompositionRoot().compose();
