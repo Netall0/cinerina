@@ -1,6 +1,7 @@
 import 'dart:async';
 
-import 'package:cinerina/core/router/favorites_screen.dart';
+import 'package:cinerina/feature/auth/widget/sing_up_screen.dart';
+import 'package:cinerina/feature/favorites/favorites_screen.dart';
 import 'package:cinerina/core/router/profile_screen.dart';
 import 'package:cinerina/feature/app/widget/app_shell.dart';
 import 'package:cinerina/feature/auth/bloc/auth_bloc.dart';
@@ -14,19 +15,18 @@ part 'router.g.dart';
 
 class AppRouter {
   static GoRouter router(AuthBloc authBloc) => GoRouter(
-    initialLocation: '/',
+    debugLogDiagnostics: true,
+    initialLocation: '/home',
     routes: $appRoutes,
     redirect: (context, state) {
       final authState = authBloc.state;
       final isSignIn = state.matchedLocation == '/signin';
 
       switch (state) {
-        case _ when authState is AuthUnauthenticated && !isSignIn:
-          return '/signin';
+        case _ when authState is AuthUnauthenticated:
+          return '/signin/signup';
         case _ when authState is AuthAuthenticated && isSignIn:
-          return '/';
-        case _ when authState is AuthInitial:
-          return null;
+          return '/home';
       }
 
       return null;
@@ -49,22 +49,28 @@ class GoRouterRefreshStream extends ChangeNotifier {
   }
 }
 
-
-@TypedGoRoute<SignInRoute>(path: '/signin')
+@TypedGoRoute<SignInRoute>(
+  path: '/signin',
+  routes: [TypedGoRoute<SignUpRoute>(path: '/signup')],
+)
 class SignInRoute extends GoRouteData with $SignInRoute {
   @override
   Widget build(BuildContext context, GoRouterState state) =>
       const SingInScreen();
 }
 
-
+class SignUpRoute extends GoRouteData with $SignUpRoute {
+  @override
+  Widget build(BuildContext context, GoRouterState state) =>
+      const SingUpScreen();
+}
 
 @TypedStatefulShellRoute<AppShellRouteData>(
   branches: <TypedStatefulShellBranch<StatefulShellBranchData>>[
     TypedStatefulShellBranch<SearchShellBranchData>(
       routes: [
         TypedGoRoute<SearchRouteData>(
-          path: '/',
+          path: '/home',
           routes: [
             TypedGoRoute<SearchDetailedRouteData>(path: '/detailed/:name'),
           ],
@@ -79,10 +85,6 @@ class SignInRoute extends GoRouteData with $SignInRoute {
     ),
   ],
 )
-
-
-
-
 class AppShellRouteData extends StatefulShellRouteData {
   @override
   Widget builder(

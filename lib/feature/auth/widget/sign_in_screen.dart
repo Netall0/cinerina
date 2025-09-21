@@ -2,6 +2,7 @@ import 'package:cinerina/feature/auth/bloc/auth_bloc.dart';
 import 'package:cinerina/feature/initialization/widget/depend_scope.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 class SingInScreen extends StatefulWidget {
   const SingInScreen({super.key});
@@ -14,11 +15,17 @@ class _SingInScreenState extends State<SingInScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
 
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
 
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-      final bloc = DependScope.of(context).dependModel.authBloc;
+    final bloc = DependScope.of(context).dependModel.authBloc;
     return Scaffold(
       appBar: AppBar(title: const Text('Login')),
       body: BlocListener<AuthBloc, AuthState>(
@@ -48,7 +55,6 @@ class _SingInScreenState extends State<SingInScreen> {
                 bloc: bloc,
                 builder: (context, state) {
                   return ElevatedButton(
-                    
                     onPressed: state is AuthLoading
                         ? CircularProgressIndicator.adaptive
                         : () {
@@ -64,6 +70,12 @@ class _SingInScreenState extends State<SingInScreen> {
                         : const Text('Login'),
                   );
                 },
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  context.go('/signup');
+                },
+                child: Text('register'),
               ),
             ],
           ),
