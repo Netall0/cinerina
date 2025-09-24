@@ -1,6 +1,11 @@
 import 'dart:async';
 
+<<<<<<< HEAD
 import 'package:cinerina/core/router/favorites_screen.dart';
+=======
+import 'package:cinerina/feature/auth/widget/sing_up_screen.dart';
+import 'package:cinerina/feature/favorites/favorites_screen.dart';
+>>>>>>> feature--auth-flow
 import 'package:cinerina/core/router/profile_screen.dart';
 import 'package:cinerina/feature/app/widget/app_shell.dart';
 import 'package:cinerina/feature/auth/bloc/auth_bloc.dart';
@@ -12,6 +17,7 @@ import 'package:go_router/go_router.dart';
 
 part 'router.g.dart';
 
+<<<<<<< HEAD
 class AppRouter {
   static GoRouter router(AuthBloc authBloc) => GoRouter(
     initialLocation: '/',
@@ -27,6 +33,39 @@ class AppRouter {
           return '/';
         case _ when authState is AuthInitial:
           return null;
+=======
+
+
+class AppRouter {
+  static GoRouter router(AuthBloc authBloc) => GoRouter(
+    debugLogDiagnostics: true,
+    initialLocation: '/signin',
+    routes: $appRoutes,
+    redirect: (context, state) {
+      final authState = authBloc.state;
+      final currentLocation = state.matchedLocation;
+
+      final authPaths = ['/signin', '/signin/signup'];
+
+      switch (state) {
+        case _ when authState is AuthLoading:
+          return null;
+
+        case _ when authState is AuthUnauthenticated:
+          if (!authPaths.contains(currentLocation)) {
+            return '/signin';
+          }
+          break;
+
+        case _ when authState is AuthAuthenticated:
+          if (currentLocation == '/signin/signup') {
+            return '/signin';
+          }
+          if (currentLocation == '/signin') {
+            return '/home';
+          }
+          break;
+>>>>>>> feature--auth-flow
       }
 
       return null;
@@ -49,22 +88,37 @@ class GoRouterRefreshStream extends ChangeNotifier {
   }
 }
 
+<<<<<<< HEAD
 
 @TypedGoRoute<SignInRoute>(path: '/signin')
+=======
+@TypedGoRoute<SignInRoute>(
+  path: '/signin',
+  routes: [TypedGoRoute<SignUpRoute>(path: '/signup')],
+)
+>>>>>>> feature--auth-flow
 class SignInRoute extends GoRouteData with $SignInRoute {
   @override
   Widget build(BuildContext context, GoRouterState state) =>
       const SingInScreen();
 }
 
+<<<<<<< HEAD
 
+=======
+class SignUpRoute extends GoRouteData with $SignUpRoute {
+  @override
+  Widget build(BuildContext context, GoRouterState state) =>
+      const SingUpScreen();
+}
+>>>>>>> feature--auth-flow
 
 @TypedStatefulShellRoute<AppShellRouteData>(
   branches: <TypedStatefulShellBranch<StatefulShellBranchData>>[
     TypedStatefulShellBranch<SearchShellBranchData>(
       routes: [
         TypedGoRoute<SearchRouteData>(
-          path: '/',
+          path: '/home',
           routes: [
             TypedGoRoute<SearchDetailedRouteData>(path: '/detailed/:name'),
           ],

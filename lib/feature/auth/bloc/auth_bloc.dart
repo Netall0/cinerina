@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:bloc/bloc.dart';
 import 'package:cinerina/core/bloc/bloc_transformer.dart';
 import 'package:cinerina/feature/auth/data/auth_repository.dart';
@@ -16,9 +15,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
   AuthBloc({required AuthRepository authRepository})
     : _authRepository = authRepository,
-
       super(AuthInitial()) {
-    _authSubscription = _authRepository.authStateChanges.listen(
+    _authSubscription = authRepository.authStateChanges.listen(
       (user) => add(AuthUserChanged(user)),
     );
 
@@ -35,11 +33,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
   void _onAuthUserChanged(AuthUserChanged event, Emitter<AuthState> emit) {
     final user = event.user;
-    if (user != null) {
-      emit(AuthAuthenticated(user: user));
-    } else {
-      emit(AuthUnauthenticated());
-    }
+    user != null
+        ? emit(AuthAuthenticated(user: user))
+        : emit(const AuthError(errorMessage: 'Login failed'));
   }
 
   Future<void> _authLogoutRequested(
@@ -49,7 +45,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     emit(AuthLoading());
     try {
       await _authRepository.signOut();
-      emit(const AuthUnauthenticated());
     } on Object catch (e) {
       emit(AuthError(errorMessage: e.toString()));
     }
@@ -62,10 +57,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     emit(AuthLoading());
     try {
       await _authRepository.singUpWithEmail(event.email, event.password);
-      final user = _authRepository.currentUser;
-      user != null
-          ? emit(AuthAuthenticated(user: user))
-          : emit(const AuthError(errorMessage: 'Registration failed'));
     } on Object catch (e) {
       emit(AuthError(errorMessage: e.toString()));
     }
@@ -78,10 +69,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     emit(AuthLoading());
     try {
       await _authRepository.singInWithEmail(event.email, event.password);
-      final user = _authRepository.currentUser;
-      user != null
-          ? emit(AuthAuthenticated(user: user))
-          : emit(const AuthError(errorMessage: 'Login failed'));
     } on Object catch (e) {
       emit(AuthError(errorMessage: e.toString()));
     }
@@ -94,7 +81,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     emit(AuthLoading());
     try {
       final user = _authRepository.currentUser;
-
       user == null
           ? emit(AuthUnauthenticated())
           : emit(AuthAuthenticated(user: user));

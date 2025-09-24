@@ -1,10 +1,7 @@
 import 'package:cinerina/core/router/router.dart';
-import 'package:cinerina/feature/favorites/bloc/favorites_bloc.dart';
-import 'package:cinerina/feature/history/bloc/history_bloc.dart';
 import 'package:cinerina/feature/initialization/widget/depend_scope.dart';
 import 'package:cinerina/feature/search/bloc/search_bloc.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:uikit/themes/app_theme.dart';
 
 class AppMaterial extends StatefulWidget {

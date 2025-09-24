@@ -8,8 +8,18 @@ part of 'router.dart';
 
 List<RouteBase> get $appRoutes => [$signInRoute, $appShellRouteData];
 
+<<<<<<< HEAD
 RouteBase get $signInRoute =>
     GoRouteData.$route(path: '/signin', factory: $SignInRoute._fromState);
+=======
+RouteBase get $signInRoute => GoRouteData.$route(
+  path: '/signin',
+  factory: $SignInRoute._fromState,
+  routes: [
+    GoRouteData.$route(path: '/signup', factory: $SignUpRoute._fromState),
+  ],
+);
+>>>>>>> feature--auth-flow
 
 mixin $SignInRoute on GoRouteData {
   static SignInRoute _fromState(GoRouterState state) => SignInRoute();
@@ -30,6 +40,29 @@ mixin $SignInRoute on GoRouteData {
   @override
   void replace(BuildContext context) => context.replace(location);
 }
+<<<<<<< HEAD
+=======
+
+mixin $SignUpRoute on GoRouteData {
+  static SignUpRoute _fromState(GoRouterState state) => SignUpRoute();
+
+  @override
+  String get location => GoRouteData.$location('/signup');
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}
+>>>>>>> feature--auth-flow
 
 RouteBase get $appShellRouteData => StatefulShellRouteData.$route(
   factory: $AppShellRouteDataExtension._fromState,
@@ -37,7 +70,7 @@ RouteBase get $appShellRouteData => StatefulShellRouteData.$route(
     StatefulShellBranchData.$branch(
       routes: [
         GoRouteData.$route(
-          path: '/',
+          path: '/home',
           factory: $SearchRouteData._fromState,
           routes: [
             GoRouteData.$route(
@@ -77,7 +110,7 @@ mixin $SearchRouteData on GoRouteData {
       const SearchRouteData();
 
   @override
-  String get location => GoRouteData.$location('/');
+  String get location => GoRouteData.$location('/home');
 
   @override
   void go(BuildContext context) => context.go(location);
