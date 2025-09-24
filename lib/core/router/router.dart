@@ -16,17 +16,33 @@ part 'router.g.dart';
 class AppRouter {
   static GoRouter router(AuthBloc authBloc) => GoRouter(
     debugLogDiagnostics: true,
-    initialLocation: '/home',
+    initialLocation: '/signin',
     routes: $appRoutes,
     redirect: (context, state) {
       final authState = authBloc.state;
-      final isSignIn = state.matchedLocation == '/signin';
+      final currentLocation = state.matchedLocation;
+
+      final authPaths = ['/signin', '/signin/signup'];
+
 
       switch (state) {
-        case _ when authState is AuthUnauthenticated:
-          return '/signin/signup';
-        case _ when authState is AuthAuthenticated && isSignIn:
-          return '/home';
+        case _ when authState is  AuthLoading:
+          return null;
+
+        case  _ when authState is  AuthUnauthenticated:
+          if (!authPaths.contains(currentLocation)) {
+            return '/signin';
+          }
+          break;
+
+        case _ when authState  is  AuthAuthenticated:
+          if (currentLocation == '/signin/signup') {
+            return '/signin';
+          }
+          if (currentLocation == '/signin') {
+            return '/home';
+          }
+          break;
       }
 
       return null;

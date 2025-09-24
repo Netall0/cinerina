@@ -73,7 +73,7 @@ class _SingInScreenState extends State<SingInScreen> {
               ),
               ElevatedButton(
                 onPressed: () {
-                  context.go('/signup');
+                  context.push('/signin/signup');
                 },
                 child: Text('register'),
               ),
