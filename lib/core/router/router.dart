@@ -1,11 +1,7 @@
 import 'dart:async';
 
-<<<<<<< HEAD
-import 'package:cinerina/core/router/favorites_screen.dart';
-=======
 import 'package:cinerina/feature/auth/widget/sing_up_screen.dart';
 import 'package:cinerina/feature/favorites/favorites_screen.dart';
->>>>>>> feature--auth-flow
 import 'package:cinerina/core/router/profile_screen.dart';
 import 'package:cinerina/feature/app/widget/app_shell.dart';
 import 'package:cinerina/feature/auth/bloc/auth_bloc.dart';
@@ -17,23 +13,6 @@ import 'package:go_router/go_router.dart';
 
 part 'router.g.dart';
 
-<<<<<<< HEAD
-class AppRouter {
-  static GoRouter router(AuthBloc authBloc) => GoRouter(
-    initialLocation: '/',
-    routes: $appRoutes,
-    redirect: (context, state) {
-      final authState = authBloc.state;
-      final isSignIn = state.matchedLocation == '/signin';
-
-      switch (state) {
-        case _ when authState is AuthUnauthenticated && !isSignIn:
-          return '/signin';
-        case _ when authState is AuthAuthenticated && isSignIn:
-          return '/';
-        case _ when authState is AuthInitial:
-          return null;
-=======
 
 
 class AppRouter {
@@ -65,7 +44,6 @@ class AppRouter {
             return '/home';
           }
           break;
->>>>>>> feature--auth-flow
       }
 
       return null;
@@ -88,30 +66,21 @@ class GoRouterRefreshStream extends ChangeNotifier {
   }
 }
 
-<<<<<<< HEAD
-
-@TypedGoRoute<SignInRoute>(path: '/signin')
-=======
 @TypedGoRoute<SignInRoute>(
   path: '/signin',
   routes: [TypedGoRoute<SignUpRoute>(path: '/signup')],
 )
->>>>>>> feature--auth-flow
 class SignInRoute extends GoRouteData with $SignInRoute {
   @override
   Widget build(BuildContext context, GoRouterState state) =>
       const SingInScreen();
 }
 
-<<<<<<< HEAD
-
-=======
 class SignUpRoute extends GoRouteData with $SignUpRoute {
   @override
   Widget build(BuildContext context, GoRouterState state) =>
       const SingUpScreen();
 }
->>>>>>> feature--auth-flow
 
 @TypedStatefulShellRoute<AppShellRouteData>(
   branches: <TypedStatefulShellBranch<StatefulShellBranchData>>[
@@ -133,10 +102,6 @@ class SignUpRoute extends GoRouteData with $SignUpRoute {
     ),
   ],
 )
-
-
-
-
 class AppShellRouteData extends StatefulShellRouteData {
   @override
   Widget builder(
