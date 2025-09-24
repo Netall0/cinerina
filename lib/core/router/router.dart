@@ -13,6 +13,8 @@ import 'package:go_router/go_router.dart';
 
 part 'router.g.dart';
 
+
+
 class AppRouter {
   static GoRouter router(AuthBloc authBloc) => GoRouter(
     debugLogDiagnostics: true,
@@ -24,18 +26,17 @@ class AppRouter {
 
       final authPaths = ['/signin', '/signin/signup'];
 
-
       switch (state) {
-        case _ when authState is  AuthLoading:
+        case _ when authState is AuthLoading:
           return null;
 
-        case  _ when authState is  AuthUnauthenticated:
+        case _ when authState is AuthUnauthenticated:
           if (!authPaths.contains(currentLocation)) {
             return '/signin';
           }
           break;
 
-        case _ when authState  is  AuthAuthenticated:
+        case _ when authState is AuthAuthenticated:
           if (currentLocation == '/signin/signup') {
             return '/signin';
           }
