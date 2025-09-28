@@ -8,10 +8,6 @@ part of 'router.dart';
 
 List<RouteBase> get $appRoutes => [$signInRoute, $appShellRouteData];
 
-<<<<<<< HEAD
-RouteBase get $signInRoute =>
-    GoRouteData.$route(path: '/signin', factory: $SignInRoute._fromState);
-=======
 RouteBase get $signInRoute => GoRouteData.$route(
   path: '/signin',
   factory: $SignInRoute._fromState,
@@ -19,7 +15,6 @@ RouteBase get $signInRoute => GoRouteData.$route(
     GoRouteData.$route(path: '/signup', factory: $SignUpRoute._fromState),
   ],
 );
->>>>>>> feature--auth-flow
 
 mixin $SignInRoute on GoRouteData {
   static SignInRoute _fromState(GoRouterState state) => SignInRoute();
@@ -40,8 +35,6 @@ mixin $SignInRoute on GoRouteData {
   @override
   void replace(BuildContext context) => context.replace(location);
 }
-<<<<<<< HEAD
-=======
 
 mixin $SignUpRoute on GoRouteData {
   static SignUpRoute _fromState(GoRouterState state) => SignUpRoute();
@@ -62,7 +55,6 @@ mixin $SignUpRoute on GoRouteData {
   @override
   void replace(BuildContext context) => context.replace(location);
 }
->>>>>>> feature--auth-flow
 
 RouteBase get $appShellRouteData => StatefulShellRouteData.$route(
   factory: $AppShellRouteDataExtension._fromState,
@@ -75,6 +67,7 @@ RouteBase get $appShellRouteData => StatefulShellRouteData.$route(
           routes: [
             GoRouteData.$route(
               path: '/detailed/:name',
+              name: 'detailed',
               factory: $SearchDetailedRouteData._fromState,
             ),
           ],
@@ -85,6 +78,7 @@ RouteBase get $appShellRouteData => StatefulShellRouteData.$route(
       routes: [
         GoRouteData.$route(
           path: '/favorites',
+          name: '/favorites',
           factory: $FavoritesRouteData._fromState,
         ),
       ],
@@ -93,6 +87,7 @@ RouteBase get $appShellRouteData => StatefulShellRouteData.$route(
       routes: [
         GoRouteData.$route(
           path: '/profile',
+          name: '/profile',
           factory: $ProfileRouteData._fromState,
         ),
       ],

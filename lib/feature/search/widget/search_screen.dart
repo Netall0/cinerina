@@ -295,22 +295,9 @@ class _SearchScreenState extends State<SearchScreen> with LoggerMixin {
                                 ),
                                 child: InkWell(
                                   onTap: () {
-                                    final routeData = SearchDetailedRouteData(
-                                      name:
-                                          state.searchList.docs?[index].name
-                                              .orIfEmpty(
-                                                state
-                                                        .searchList
-                                                        .docs?[index]
-                                                        .alternativeName ??
-                                                    '',
-                                              ) ??
-                                          '',
-                                      heroTag:
-                                          state.searchList.docs?[index].id
-                                              ?.toString()
-                                              .orIfEmpty('$index') ??
-                                          '$index',
+                                    final route = SearchDetailedScreen(
+                                      movie: state.searchList.docs?[index],
+                                      heroTag: '$index',
                                       imageUrl:
                                           state
                                               .searchList
@@ -325,16 +312,31 @@ class _SearchScreenState extends State<SearchScreen> with LoggerMixin {
                                                         ?.url ??
                                                     '',
                                               ) ??
-                                          '',
+                                          'https://www.svgrepo.com/svg/508699/landscape-placeholder',
                                       description:
                                           state
                                               .searchList
                                               .docs?[index]
                                               .description ??
                                           '',
+                                      name:
+                                          state.searchList.docs?[index].name
+                                              .orIfEmpty(
+                                                state
+                                                        .searchList
+                                                        .docs?[index]
+                                                        .alternativeName ??
+                                                    '',
+                                              ) ??
+                                          '',
                                     );
-                                    context.go(
-                                      routeData.location,
+                                    context.pushNamed(
+                                      'detailed',
+                                      queryParameters: {
+                                        'heroTag': route.heroTag,
+                                        'description': route.description
+                                      },
+                                      pathParameters: {'name': route.name},
                                       extra: state.searchList.docs?[index],
                                     );
                                   },
@@ -776,7 +778,11 @@ class SearchDetailedScreen extends StatelessWidget {
                   Hero(
                     tag: heroTag.replaceFirst('movie-', 'movie-poster-'),
                     child: CachedNetworkImage(
-                      imageUrl: imageUrl,
+                      imageUrl: movie?.poster?.previewUrl
+                              .orIfEmpty(
+                                movie?.poster?.url ?? '',
+                              ) ??
+                          '',
                       fit: BoxFit.cover,
                       errorWidget: (context, url, error) => Container(
                         color: theme.surface,
