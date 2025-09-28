@@ -13,6 +13,11 @@ import 'package:go_router/go_router.dart';
 
 part 'router.g.dart';
 
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> e2b66a9dd12667e5e0f2c2449b9d33bb079aaac3
 class AppRouter {
   static GoRouter router(AuthBloc authBloc) => GoRouter(
     debugLogDiagnostics: true,
